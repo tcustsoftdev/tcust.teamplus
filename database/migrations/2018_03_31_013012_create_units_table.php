@@ -24,7 +24,6 @@ class CreateUnitsTable extends Migration
 
             $table->boolean('active')->default(true);
             $table->boolean('removed')->default(false);	
-            $table->integer('updated_by')->unsigned()->nullable();
             $table->timestamps();
         });
     }

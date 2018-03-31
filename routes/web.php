@@ -12,6 +12,7 @@
 */
 
 Route::get('/', function () {
+    dd(\App\Unit::all());
     \App\Unit::create([
         'name' => 'iiki',
         'code' => 'cscsc',

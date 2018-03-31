@@ -32,7 +32,7 @@ return [
     */
 
     'connections' => [
-
+       
         'sqlsrv_app' => [
             'driver' => 'sqlsrv',
             'host' => env('DB_HOST', 'localhost'),
