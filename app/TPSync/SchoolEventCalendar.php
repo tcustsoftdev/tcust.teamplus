@@ -2,9 +2,9 @@
 
 namespace App\TPSync;
 
-use App\TPSync\BaseTPSyncModel;
+use App\BaseModel;
 
-class SchoolEventCalendar extends BaseTPSyncModel
+class SchoolEventCalendar extends BaseModel
 {
     protected $table = 'school_event_calendar';
     protected $fillable = [ 'code', 'name', 'description','members',

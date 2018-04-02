@@ -12,44 +12,44 @@ use Carbon\Carbon;
 
 class Departments 
 {
-    
-
     public function syncDepartments()
     {
         $records=GroupSync::orderBy('parent')->get();
        
         foreach($records as $record){
-               $parent_code='';
-               $parent_checked=true;
-               if($record->parent){
-                   $parent_code=strtolower($record->parent);
-                   $parent_department=$this->getTPDepartmentByCode($parent_code);
-                   if(!$parent_department)  $parent_checked=false;
-               }
-               if(!$parent_checked){
-                   $record->msg ='父部門 ' . $record->parent . ' 不存在'; 
+            $parent_code='';
+            $parent_checked=true;
+            if($record->parent){
+                $parent_code=strtolower($record->parent);
+                $parent_department=$this->getTPDepartmentByCode($parent_code);
                 
-                   $record->success=false;
-                   $record->save();                   
-               }else{
+                if(!$parent_department)  $parent_checked=false;
+            }
+            if(!$parent_checked){
+                $record->msg ='父部門 ' . $record->parent . ' 不存在'; 
+            
+                $record->success=false;
+                $record->save();                   
+            }else{
+                
+                $code=strtolower($record->code);
+                $name=$record->name;
+                $delete=$record->is_delete;
+                
+                $saved= $this->syncDepartment($name, $code,$parent_code,$delete);
+                
+                if($saved){
+                    $record->msg ='';
+                
+                    $record->success=true;
+                    $record->save();
+                }else{
+                    $record->msg ='新增DepartmentForSync失敗';
                     
-                    $code=strtolower($record->code);
-                    $name=$record->name;
-                    $delete=$record->is_delete;
-                   
-                    $saved= $this->syncDepartment($name, $code,$parent_code,$delete);
-                    if($saved){
-                        $record->msg ='';
-                    
-                        $record->success=true;
-                        $record->save();
-                    }else{
-                        $record->msg ='新增DepartmentForSync失敗';
-                      
-                        $record->success=false;
-                        $record->save();
-                    }
-               }
+                    $record->success=false;
+                    $record->save();
+                }
+            }
 
 
                

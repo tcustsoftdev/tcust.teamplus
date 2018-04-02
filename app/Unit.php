@@ -2,14 +2,12 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use App\BaseModel;
 
-class Unit extends Model
+class Unit extends BaseModel
 {
-	protected $connection = 'sqlsrv_app';
-
 	protected $fillable = ['name', 'code', 'parent', 'description',
-						    'active', 'removed','updated_by'
+						    'is_class','active', 'removed','updated_by'
 						  ];
 	public static function initialize()
     {
@@ -18,6 +16,7 @@ class Unit extends Model
 			 'code' => '',
 			 'parent' => 0,
 			 'description' => '',
+			 'is_class' => 0,
 			 
 			 'active' => 1,
 			 'removed' => 0,

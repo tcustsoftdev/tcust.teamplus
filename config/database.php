@@ -44,16 +44,6 @@ return [
             'prefix' => '',
         ],
 
-        'sqlsrv_tp_sync' => [
-            'driver' => 'sqlsrv',
-            'host' => env('DB_TPSYNC_HOST', 'localhost'),
-            'port' => env('DB_TPSYNC_PORT', '1433'),
-            'database' => env('DB_TPSYNC_DATABASE', 'forge'),
-            'username' => env('DB_TPSYNC_USERNAME', 'forge'),
-            'password' => env('DB_TPSYNC_PASSWORD', ''),
-            'charset' => 'utf8',
-            'prefix' => '',
-        ],
 
         'sqlsrv_teamplus' => [
             'driver' => 'sqlsrv',

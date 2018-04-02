@@ -1,5 +1,4 @@
 <?php
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -12,14 +11,23 @@
 */
 
 Route::get('/', function () {
-    dd(\App\Unit::all());
-    \App\Unit::create([
-        'name' => 'iiki',
-        'code' => 'cscsc',
-        'parent' => 0,
-        'is_class' => false
-    ]);
-    // $servive=new \App\Services\UnitsService();
-    // $servive->syncUnits();
-    return view('welcome');
+
+});
+
+Route::get('/api/units', function () {
+    
+    $unitsService=new \App\Services\UnitsService();
+    $units = $unitsService->getAll()->orderBy('code')->get();
+
+    return response()->json($units);
+   
+});
+
+Route::get('/api/classes', function () {
+    
+    $classesService=new \App\Services\ClassesService();
+    $classes = $classesService->getAll()->orderBy('code')->get();
+
+    return response()->json($classes);
+   
 });

@@ -2,9 +2,9 @@
 
 namespace App\TPSync;
 
-use App\TPSync\BaseTPSyncModel;
+use App\BaseModel;
 
-class SchoolNotice extends BaseTPSyncModel
+class SchoolNotice extends BaseModel
 {
     protected $table = 'school_notice_sync';
     protected $fillable = [  

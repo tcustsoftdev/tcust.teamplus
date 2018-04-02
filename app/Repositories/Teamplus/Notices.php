@@ -118,7 +118,7 @@ class Notices extends BaseTeamPlusRepo
         
 
         $body =  json_decode($response->getBody());
-      
+        
         return $body;
 
     }

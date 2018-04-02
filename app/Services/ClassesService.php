@@ -9,16 +9,15 @@ class ClassesService
 {
     public function getAll()
     {
-        return Unit::where('is_class', true)->where('removed',false);
+        return Unit::where('is_class', true);
     }
     public function getClassByCode($code)
     {
-        $code=strtolower($code);
         return $this->getAll()->where('code',$code)->first();
     }
     private function getParentId($parent_code)
     {
-        $parent= Unit::where('code',$code)->first();
+        $parent= Unit::where('code',$parent_code)->first();
         if($parent) return $parent->id;
         return 0;
     }
@@ -40,6 +39,7 @@ class ClassesService
     public function syncClasses()
     {
         $need_sync_list=$this->get_need_sync_list();
+       
         if(count($need_sync_list))
         {
             foreach($need_sync_list as $record)
@@ -49,6 +49,7 @@ class ClassesService
                     $this->deleteClass($record);
                 }else{
                     $exist=$this->getClassByCode($record->code);
+                    
                     if($exist){
                         $this->updateClass($exist,$record);
                     }else{
@@ -83,7 +84,7 @@ class ClassesService
             $parentId=$this->getParentId($parent_code);
          
             if(!$parentId) {
-                Log::info('CreateClass Failed. parent not found parent_code=' . $parent_code);
+                
                 return;
             }
           
@@ -97,17 +98,20 @@ class ClassesService
             'is_class' => true
         ]);
 
+     
+
     }
     private function updateClass($entity ,GroupSync $record)
     {
         $parent_code=$record->parent;
        
         $parentId=0;
+        
         if($parent_code){
             $parentId=$this->getParentId($parent_code);
-         
+           
             if(!$parentId) {
-                Log::info('UpdateClass Failed. parent not found parent_code=' . $parent_code);
+               
                 return;
             }
           

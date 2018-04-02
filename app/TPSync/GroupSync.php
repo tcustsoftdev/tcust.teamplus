@@ -2,10 +2,10 @@
 
 namespace App\TPSync;
 
-use App\TPSync\BaseTPSyncModel;
+use App\BaseModel;
 use App\Support\Helper;
 
-class GroupSync extends BaseTPSyncModel
+class GroupSync extends BaseModel
 {
     protected $table = 'group_sync';
     protected $fillable = [  

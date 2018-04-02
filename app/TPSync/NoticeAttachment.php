@@ -2,9 +2,9 @@
 
 namespace App\TPSync;
 
-use App\TPSync\BaseTPSyncModel;
+use App\BaseModel;
 
-class NoticeAttachment extends BaseTPSyncModel
+class NoticeAttachment extends BaseModel
 {
     protected $table = 'school_notice_attachment';
     protected $fillable = [  

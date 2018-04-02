@@ -7,18 +7,17 @@ use App\Unit;
 
 class UnitsService
 {
-    public function getAll()
+    public function getAll()    
     {
         return Unit::where('is_class', false)->where('removed',false);
     }
     public function getUnitByCode($code)
     {
-        $code=strtolower($code);
         return $this->getAll()->where('code',$code)->first();
     }
     private function getParentId($parent_code)
     {
-        $parent= Unit::where('code',$code)->first();
+        $parent= Unit::where('code',$parent_code)->first();
         if($parent) return $parent->id;
         return 0;
     }
@@ -81,6 +80,7 @@ class UnitsService
     {
         $need_sync_list=$this->get_need_sync_list();
        
+       
         if(count($need_sync_list))
         {
             foreach($need_sync_list as $record)
@@ -89,6 +89,7 @@ class UnitsService
                     $this->deleteUnit($record);
                 }else{
                     $exist=$this->getUnitByCode($record->code);
+                  
                     if($exist){
                         $this->updateUnit($exist,$record);
                     }else{
@@ -122,7 +123,6 @@ class UnitsService
             $parentId=$this->getParentId($parent_code);
          
             if(!$parentId) {
-                Log::info('createUnit Failed. parent not found parent_code=' . $parent_code);
                 return;
             }
           
@@ -139,14 +139,15 @@ class UnitsService
     }
     private function updateUnit($entity ,GroupSync $record)
     {
+       
         $parent_code=$record->parent;
        
         $parentId=0;
         if($parent_code){
             $parentId=$this->getParentId($parent_code);
-         
+          
             if(!$parentId) {
-                Log::info('UpdateUnit Failed. parent not found parent_code=' . $parent_code);
+              
                 return;
             }
           

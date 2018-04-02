@@ -2,9 +2,9 @@
 
 namespace App\TPSync;
 
-use App\TPSync\BaseTPSyncModel;
+use App\BaseModel;
 
-class StaffUpdateRecord extends BaseTPSyncModel
+class StaffUpdateRecord extends BaseModel
 {
     protected $table = 'staff_update_records';
     protected $fillable = ['name' ,'number', 'department' ,

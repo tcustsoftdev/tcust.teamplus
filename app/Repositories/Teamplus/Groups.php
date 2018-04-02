@@ -58,6 +58,7 @@ class Groups extends BaseTeamPlusRepo
     }
     public function update($team_id ,$manager, $name)
     {
+       
         $url= $this->api_url . '/SystemService.ashx?ask=modifyTeamInfo';
 
         $subject=$name . '成員專屬團隊';
@@ -79,6 +80,7 @@ class Groups extends BaseTeamPlusRepo
         ]);
 
         $body =  json_decode($response->getBody());
+       
         return $body;
 
     }
@@ -117,7 +119,7 @@ class Groups extends BaseTeamPlusRepo
        
 
         $body =  json_decode($response->getBody());
-        dd($body);
+     
         return $body;
     }
     public function removeMembers(array $members,$team_id)

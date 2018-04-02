@@ -19,6 +19,7 @@ class GroupService
     public function syncGroups()
     {
         $need_sync_list=GroupSync::where('sync',false)->get();
+      
         if(count($need_sync_list))
         {
             foreach($need_sync_list as $record)
@@ -27,6 +28,7 @@ class GroupService
                 if((int)$record->tp_id)
                 {
                     $this->updateGroup($record);
+
                 }else{
                    
                     $this->createGroup($record);
@@ -63,6 +65,7 @@ class GroupService
     }
     private function updateGroup(GroupSync $record)
     {
+       
         $team_id=(int)$record->tp_id;
         if(!$team_id){
             $this->noneTeamError($record);
@@ -70,14 +73,16 @@ class GroupService
         }
 
         $members=explode(',',strtolower($record->getMembers())); 
+       
         $owner='';
         $manager=strtolower($record->admin);
+       
         $name=$record->name;
-
         
         $this->updateGroupName($record,$team_id ,$manager, $name);
         
         $result=$this->groups->details($team_id);
+        
         if(!$result->IsSuccess)
         {
             $record->success=false;
@@ -106,7 +111,6 @@ class GroupService
        
         $need_to_add=array_diff($members, $old_member_list);
         
-       
         if(count($need_to_remove)){
             $need_to_remove=array_flatten($need_to_remove);
             $result=$this->groups->removeMembers($need_to_remove,$team_id);
@@ -144,6 +148,7 @@ class GroupService
     {
         $managerList=$teamInfo->ManagerList;
         $exist=in_array($manager, $managerList);
+     
         if(!$exist){
             $result=$this->groups->addManager($team_id,$manager);
             if(!$result->IsSuccess)

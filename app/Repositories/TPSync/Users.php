@@ -50,6 +50,7 @@ class Users
     public function syncStaffs()
     {
         $records=StaffUpdateRecord::where('done', false )->get();
+       
         foreach($records as $record){
                $number=$record->number;
                $password=$record->password;
@@ -81,6 +82,7 @@ class Users
         $code= strtolower($class);
 
         $tp_department=TPDepartment::where('Code',$code)->first();
+        
         if($tp_department){
             $values=TPUserForSync::initialize();
             $values['LoginAccount']=$number;

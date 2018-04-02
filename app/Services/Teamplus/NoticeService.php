@@ -10,14 +10,13 @@ class NoticeService
  
     public function __construct(Notices  $notices)
     {
-        $this->notices=$notices;
+        $this->notices = $notices;
     }
 
     public function syncNotices()
     {
         $need_sync_list=SchoolNotice::where('sync',false)->get();
-      
-       
+        
         if(count($need_sync_list))
         {
              foreach($need_sync_list as $record){
@@ -32,7 +31,6 @@ class NoticeService
                     $file_data=$attachment->file_data;
 
                     $upload_result= $this->notices->upload($file_type,$file_data);
-
                    
                     if($upload_result->IsSuccess){
 
@@ -46,6 +44,8 @@ class NoticeService
                         $file_name=$attachment->display_name . '.' . $attachment->file_type;
                        
                         $notice_result=$this->notices->create($accounts,$type, $content, $file, $file_name);
+
+                      
 
                         $success=$notice_result->IsSuccess;
                         $msg==$notice_result->Description;
