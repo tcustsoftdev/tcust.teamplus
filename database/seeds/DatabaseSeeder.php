@@ -17,9 +17,9 @@ class DatabaseSeeder extends Seeder
             'code' => '118000',
             
             'is_class' => false,
-            'level_ones' => 'a12345',
+            'level_ones' => 'iscsd00',
             'level_twos' => '',
-            'admin' => 'a12345',
+            'admin' => 'iscsd00',
             'active' => true,
             'removed' => false,
        ]);
@@ -32,8 +32,8 @@ class DatabaseSeeder extends Seeder
             'parent' => $unit->id,
             'is_class' => false,
             'level_ones' => '',
-            'level_twos' => 'b12345,c12345',
-            'admin' => 'b12345',
+            'level_twos' => 'iscsd00',
+            'admin' => 'iscsd00',
             'active' => true,
             'removed' => false,
        ]);
