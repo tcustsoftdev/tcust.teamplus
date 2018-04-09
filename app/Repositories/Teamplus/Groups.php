@@ -14,12 +14,13 @@ class Groups extends BaseTeamPlusRepo
 {
     protected $api_key;
     protected $api_sn;
+
     public function __construct()
     {
         parent::__construct();
         $this->api_key=Config::get('teamplus.system.api_key');
         $this->api_sn=Config::get('teamplus.system.api_sn');
-        $this->system_admin=Config::get('teamplus.system.system_admin');
+        $this->company_admin=Config::get('teamplus.system.company_admin');
           
     }
 
@@ -33,9 +34,11 @@ class Groups extends BaseTeamPlusRepo
         $subject=$name . '成員專屬團隊';
         $description=$name . '成員的訊息交換平台';
 
-        if(!$owner) $owner=$this->system_admin;
+        if(!$owner) $owner=$this->company_admin;
 
+        
 
+       
         $client = new Client(); 
         $response = $client->request('POST', $url, [
             'form_params' => [
@@ -53,10 +56,11 @@ class Groups extends BaseTeamPlusRepo
         ]);
 
         $body =  json_decode($response->getBody());
-        return $body;
+
+        return $body->TeamSN;
 
     }
-    public function update($team_id ,$manager, $name)
+    public function update($team_id ,$operator, $name)
     {
        
         $url= $this->api_url . '/SystemService.ashx?ask=modifyTeamInfo';
@@ -64,13 +68,16 @@ class Groups extends BaseTeamPlusRepo
         $subject=$name . '成員專屬團隊';
         $description=$name . '成員的訊息交換平台';
 
+        if(!$operator) $operator=$this->company_admin;
+        
+        
         $client = new Client(); 
         $response = $client->request('POST', $url, [
             'form_params' => [
                 'system_sn' => $this->api_sn,
                 'api_key' => $this->api_key,
                 'team_sn' => $team_id,
-                'operator' => $manager,
+                'operator' => $this->company_admin,
                 'name' => $name,
                 'team_type' => 1,    //封閉式
                 'subject' => $subject,
@@ -111,7 +118,7 @@ class Groups extends BaseTeamPlusRepo
                 'system_sn' => $this->api_sn,
                 'api_key' => $this->api_key,
                 'team_sn' => $team_id,
-                'operator' => $this->system_admin,
+                'operator' => $this->company_admin,
                 'member_list' => json_encode($members)
             ]
         ]);
@@ -133,7 +140,7 @@ class Groups extends BaseTeamPlusRepo
                 'system_sn' => $this->api_sn,
                 'api_key' => $this->api_key,
                 'team_sn' => $team_id,
-                'operator' => $this->system_admin,
+                'operator' => $this->company_admin,
                 'member_list' => json_encode($members)
             ]
         ]);
@@ -144,18 +151,18 @@ class Groups extends BaseTeamPlusRepo
 
     public function addManager($team_id,$manager)
     {
-        
+      
         $url= $this->api_url . '/SystemService.ashx?ask=assignTeamManager';
 
         $manager_list=[$manager];
-            
+       
         $client = new Client(); 
         $response = $client->request('POST', $url, [
             'form_params' => [
                 'system_sn' => $this->api_sn,
                 'api_key' => $this->api_key,
                 'team_sn' => $team_id,
-                'operator' => $this->system_admin,
+                'operator' => $this->company_admin,
                 
                 'manager_list' => json_encode($manager_list)
                 
@@ -163,11 +170,12 @@ class Groups extends BaseTeamPlusRepo
         ]);
 
         $body =  json_decode($response->getBody());
+       
         return $body;
     }
     public function removeManager($team_id,$manager)
     {
-        if($manager==$this->system_admin) return;
+        if($manager==$this->company_admin) return;
 
         $url= $this->api_url . '/SystemService.ashx?ask=cancelTeamManager';
 
@@ -179,7 +187,7 @@ class Groups extends BaseTeamPlusRepo
                 'system_sn' => $this->api_sn,
                 'api_key' => $this->api_key,
                 'team_sn' => $team_id,
-                'operator' => $this->system_admin,
+                'operator' => $this->company_admin,
                 
                 'manager_list' => json_encode($manager_list)
                 
@@ -191,7 +199,7 @@ class Groups extends BaseTeamPlusRepo
     }
     public function delete($team_id, $owner='')
     {
-        if(!$owner) $owner=$this->system_admin;
+        if(!$owner) $owner=$this->company_admin;
 
         $url= $this->api_url . '/SystemService.ashx?ask=deleteTeam';
         $client = new Client(); 

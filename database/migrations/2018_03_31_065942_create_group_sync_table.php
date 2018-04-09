@@ -19,9 +19,16 @@ class CreateGroupSyncTable extends Migration
             $table->string('parent')->nullable();
             $table->string('code');	
             $table->string('name');		
-            $table->text('admin');				
+            $table->text('admin');	
             $table->text('members');
             $table->boolean('is_delete')->default(false);
+
+            $table->text('level_ones')->nullable();
+            $table->text('level_twos')->nullable();
+            $table->text('teachers')->nullable();
+            $table->text('staffs')->nullable();
+            $table->text('students')->nullable();
+            
 
             $table->boolean('sync')->default(false);
             $table->string('msg')->nullable();		

@@ -6,35 +6,44 @@ use App\BaseModel;
 
 class Unit extends BaseModel
 {
-	protected $fillable = ['name', 'code', 'parent', 'description',
+	protected $fillable = [ 'name', 'code', 'parent', 'tp_id','description',
+							'admin','level_ones','level_twos',
 						    'is_class','active', 'removed','updated_by'
 						  ];
+	
+	public function setCodeAttribute($value) 
+	{
+		$this->attributes['code'] = strtolower($value);
+	}
 	public static function initialize()
     {
          return [
 			 'name' => '',
 			 'code' => '',
-			 'parent' => 0,
+			 'parent' => '',
 			 'description' => '',
-			 'is_class' => 0,
-			 
-			 'active' => 1,
-			 'removed' => 0,
+			 'is_class' => false,
+			 'admin' => '',
+			 'level_ones' => '',
+			 'level_twos' => '',
+			 'active' => true,
+			 'removed' => false,
 			 'updated_by' => '',
 
-			 'order' => 0,
-			 'icon' => ''
+			
 			 
         ];
-    }						  
-    public function jobPositions() 
+	}	
+	
+	public function notices() 
 	{
-		return $this->hasMany(JobPosition::class);
+		return $this->hasMany(Notice::class);
 	}
-	public function staffs() 
+	public function users() 
 	{
-		return $this->hasMany(Staff::class);
+		return $this->hasMany(User::class);
 	}
+    
 	public function parentDepartment()
     {
 		$parentId=(int)$this->parent;
@@ -57,16 +66,41 @@ class Unit extends BaseModel
 		if($parent_department)  return $parent_department->code;
 		return '';
        
-    }
+	}
+	
+	public function rootUnit()
+	{
+		
+		$parentUnit=null;
+		$parentId=$this->parent;
+		while ($parentId>0) {
+			$parentUnit=static::find($parentId);
+			$parentId=$parentUnit->parent;
+		}
+
+		return $parentUnit;
+	}
+
+	public function topManagers()
+	{
+		$rootUnit=$this->rootUnit();
+		if($rootUnit){
+			return $rootUnit->level_ones; 
+		}else{
+			return $this->level_ones; 
+		}
+	}
 
 
 	public function getParents()
 	{
 		if(!$this->parent){
+			
 			$this->parentDepartment=null;
 			return ;
 		}
 		$parentDepartment=static::find($this->parent);
+		
 		$hasParent=$parentDepartment->parent > 0;
 		$parents = collect([$parentDepartment]);
 		
@@ -79,13 +113,13 @@ class Unit extends BaseModel
 		$this->parentDepartment=$parents;
 	}
 
-	public function getChildren(){
+	public function getChildren($hideMembers=true){
 		
-		$children=$this->childs();
+		$children=$this->childs($hideMembers);
 
 		if(count($children)){
             foreach ($children as $unit) {
-                $unit->getChildren();
+                $unit->getChildren($hideMembers);
             }
         }
 
@@ -95,9 +129,10 @@ class Unit extends BaseModel
 		
 	}
 	
-	public function childs()
+	public function childs($hideMembers=true)
 	{
 		return static::where('removed',false)
+					  ->select('name','code','id','parent')
 					  ->where('parent',$this->id)
 					  ->get();
 	}

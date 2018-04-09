@@ -4,6 +4,7 @@ namespace App\Services\Teamplus;
 
 use App\Repositories\Teamplus\Groups;
 use App\TPSync\GroupSync;
+use App\Unit;
 
 use Config;
 
@@ -13,8 +14,10 @@ class GroupService
     public function __construct(Groups  $groups)
     {
         $this->groups=$groups;
-        $this->system_admin=Config::get('teamplus.system.system_admin');
+        $this->company_admin=Config::get('teamplus.system.company_admin');
     }
+
+   
 
     public function syncGroups()
     {
@@ -163,7 +166,7 @@ class GroupService
         }
 
         for($i = 0; $i < count($managerList); ++$i) {
-            if($managerList[$i] !=$manager && $managerList[$i] !=$this->system_admin){
+            if($managerList[$i] !=$manager && $managerList[$i] !=$this->company_admin){
                 
                 $this->groups->removeManager($team_id,$managerList[$i]);
             }

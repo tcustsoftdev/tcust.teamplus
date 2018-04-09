@@ -2,11 +2,17 @@
 
 namespace App\Services;
 
-use App\TPSync\GroupSync;
 use App\Unit;
+use App\Repositories\Teamplus\Groups;
 
 class UnitsService
 {
+    public function __construct(Groups  $groups)
+    {
+        $this->groups=$groups;
+        $this->company_admin=config('teamplus.system.company_admin');
+    }
+
     public function getAll()    
     {
         return Unit::where('is_class', false)->where('removed',false);
@@ -44,13 +50,14 @@ class UnitsService
 
     public function getTree()
     {
+       
         $units=$this->getAll()
-            ->where('code','!=', '102000')
-            ->where('active',true)
+            //->where('code','!=', '102000')
             ->where('parent',0)
-            ->orderBy('order','desc')
-            ->orderBy('updated_at','desc')
-            ->get();  
+            ->select('name','code','id','parent')
+            ->orderBy('code')
+            ->get(); 
+       
         if(count($units)){
             foreach ($units as $unit) {
                $unit->getChildren();
@@ -59,51 +66,11 @@ class UnitsService
 
         return $units;
     }
+    
 
-
-    private function get_need_sync_list()
+    private function deleteUnit(GroupSync $unit)
     {
-        $all=GroupSync::orderBy('parent')->get();
-        $need_sync_list=[];
-        foreach($all as $record)
-        {
-            if(is_numeric($record->code))
-            {
-               array_push($need_sync_list, $record);
-            }
-        }
-
-        return $need_sync_list;
-    }
-
-    public function syncUnits()
-    {
-        $need_sync_list=$this->get_need_sync_list();
-       
-       
-        if(count($need_sync_list))
-        {
-            foreach($need_sync_list as $record)
-            {
-                if($record->isdelete){
-                    $this->deleteUnit($record);
-                }else{
-                    $exist=$this->getUnitByCode($record->code);
-                  
-                    if($exist){
-                        $this->updateUnit($exist,$record);
-                    }else{
-                        $this->createUnit($record);
-                    }
-                }
-            }
-
-        }
-    }
-
-    private function deleteUnit(GroupSync $record)
-    {
-        $unit=$this->getUnitByCode($record->code);
+        $unit=$this->getUnitByCode($unit->code);
         if($unit){
             $values=[
                 'removed' => 1,
@@ -115,9 +82,9 @@ class UnitsService
     }
 
     
-    private function createUnit(GroupSync $record)
+    private function createUnit(GroupSync $unit)
     {
-        $parent_code=$record->parent;
+        $parent_code=$unit->parent;
         $parentId=0;
         if($parent_code){
             $parentId=$this->getParentId($parent_code);
@@ -128,19 +95,20 @@ class UnitsService
           
         }
 
-
         Unit::create([
-            'name' => $record->name,
-            'code' => $record->code,
+            'name' => $unit->name,
+            'code' => $unit->code,
             'parent' => $parentId,
-            'is_class' => false
+            'is_class' => false,
+            'level_ones' => $unit->level_ones,
+            'level_twos' => $unit->level_twos,
         ]);
 
     }
-    private function updateUnit($entity ,GroupSync $record)
+    private function updateUnit($entity ,GroupSync $unit)
     {
        
-        $parent_code=$record->parent;
+        $parent_code=$unit->parent;
        
         $parentId=0;
         if($parent_code){
@@ -154,13 +122,141 @@ class UnitsService
         }
 
         $entity->update([
-            'name' => $record->name,
-            'code' => $record->code,
+            'name' => $unit->name,
+            'code' => $unit->code,
             'parent' => $parentId,
+            'level_ones' => $unit->level_ones,
+            'level_twos' => $unit->level_twos,
         ]);
        
     }
+
+
+    //syncGroup
+
+    public function syncGroup(Unit $unit)
+    {
+        if($unit->tp_id)
+        {
+            $this->updateGroup($unit);
+
+        }else{
+            
+            $this->createGroup($unit);
+        }
+    }
+
+
+
+    private function createGroup(Unit $unit)
+    {
+        $members=$unit->users->pluck('number')->toArray();
+       
+        $owner='';
+        $manager=$unit->admin;
+      
+        $name=$unit->name;
+        $teamSN=$this->groups->create($members, $owner, $manager ,$name);
+
+        if((int)$teamSN > 0) {
+            $unit->tp_id=$teamSN;
+            $unit->save();
+        }
+
+    }
+    private function updateGroup(Unit $unit)
+    {
+       
+        $team_id=$unit->tp_id;
+        $members=$unit->users->pluck('number')->toArray();
+     
+        $owner='';
+        $manager=$unit->admin;
+       
+        $name=$unit->name;
+        
+        $this->updateGroupName($team_id , $name);
+        
+        $result=$this->groups->details($team_id);
+        
+        $teamInfo=$result->TeamInfo;
+
+        $result=$this->updateGroupManager($unit,$team_id,$manager,$teamInfo);
+        if(!$result) return;
+       
+       
+        $result=$this->updateGroupMembers($unit,$members,$team_id,$teamInfo);
+
+    }
+
+    private function updateGroupMembers(Unit $unit,array $members,$team_id,$teamInfo)
+    {
+      
+        $old_member_list=$teamInfo->MemberList;
+       
+        $need_to_remove=array_diff($old_member_list, $members);
+       
+        $need_to_add=array_diff($members, $old_member_list);
+       
+        
+        if(count($need_to_remove)){
+            $need_to_remove=array_flatten($need_to_remove);
+            $result=$this->groups->removeMembers($need_to_remove,$team_id);
+            if(!$result->IsSuccess)
+            {
+                return false;
+            }
+        }
+        
+        
+        if(count($need_to_add)){
+            $need_to_add=array_flatten($need_to_add);
+            $result=$this->groups->addMembers($need_to_add,$team_id);
+            if(!$result->IsSuccess)
+            {
+                return false;
+            }
+        }
+       
+
+        return true;
+    }
+
+    private function updateGroupManager(Unit $unit,$team_id,$manager,$teamInfo)
+    {
+        $managerList=$teamInfo->ManagerList;
+        
+        $exist=in_array($manager, $managerList);
+        
+     
+        if(!$exist){
+            $result=$this->groups->addManager($team_id,$manager);
+            if(!$result->IsSuccess)
+            {
+                return false;
+            }
+        }
+
+        for($i = 0; $i < count($managerList); ++$i) {
+            if($managerList[$i] !=$manager && $managerList[$i] !=$this->company_admin){
+                
+                $this->groups->removeManager($team_id,$managerList[$i]);
+            }
+           
+        }
+
+        return true;
+        
+    }
+
     
+
+    private function updateGroupName($team_id , $name)
+    {
+        $manager='';
+        $result=$this->groups->update($team_id ,$manager, $name);
+       
+    }
     
     
 }

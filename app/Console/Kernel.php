@@ -23,7 +23,7 @@ class Kernel extends ConsoleKernel
         Commands\SyncStaff::class,    //OK
         Commands\SyncStudents::class,  //OK
         
-        Commands\SyncNotices::class,  //OK
+       
         
        
        
@@ -32,7 +32,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
        
-        $schedule->command('sync:notices')->everyFiveMinutes();
+       
         
         $schedule->command('sync:classes')->dailyAt('00:00');
         $schedule->command('sync:units')->dailyAt('00:30');

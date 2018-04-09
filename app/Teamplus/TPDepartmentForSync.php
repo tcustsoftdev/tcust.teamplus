@@ -13,8 +13,8 @@ class TPDepartmentForSync extends TPModel
     public $timestamps = false;
 
     protected $fillable =  ['Code',  'Name', 'ParentCode',   'Description','UpdateTime',
-                              'SyncStatus' ,   'IsDelete' ,
-                             'SyncUpdateTime' 
+                              'SyncStatus' ,   'IsDelete' ,  'SyncUpdateTime' 
+                            
                         	];
 
     public static function initialize()

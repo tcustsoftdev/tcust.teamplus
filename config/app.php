@@ -1,6 +1,20 @@
 <?php
 
 return [
+    'api' =>[
+        'key' => 'weIwPGThqBjLeopYstJ6Hc1P2tT1aOgN'
+    ],
+    'auth' => [
+        'source' => '',
+        'dest' => 'https://www.google.com.tw/'
+    ],
+
+    'school' => [
+        'api_key' => '',
+        'source' => '',
+        'subs_api' => 'http://tcust.teamplus/subs',
+        
+    ],
 
     /*
     |--------------------------------------------------------------------------

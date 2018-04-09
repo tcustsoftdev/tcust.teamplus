@@ -79,7 +79,7 @@ class Users
     public function syncUserFromStudent($number, $password ,$email, $name, $class,$status)
     {
        
-        $code= strtolower($class);
+        $code= $class;
 
         $tp_department=TPDepartment::where('Code',$code)->first();
         
@@ -110,7 +110,7 @@ class Users
     }
     public function syncUserFromStaff($number, $password ,$email, $name, $department, $job_title, $extend  ,$status)
     {
-        $code= strtolower($department);
+        $code= $department;
         $tp_department=TPDepartment::where('Code',$code)->first();
        
         if($tp_department){
@@ -141,6 +141,41 @@ class Users
         
         
     }
+
+    public function syncUser($number, $password ,$email, $name, $department, $status)
+    {
+       
+        $code= $department;
+        $tp_department= TPDepartment::where('Code',$code)->first();
+       
+        if($tp_department){
+            $values=TPUserForSync::initialize();
+            $values['LoginAccount']=$number;
+            $values['Password']=$password;
+            
+            $values['Email']=$email;
+            $values['EmpID']=$number;
+            $values['Name']=$name;
+            $values['DeptCode']= $tp_department->Code;
+         
+            $values['Status']=$status;
+            
+            $save = $this->saveUserForSync($values);
+            if($save){
+                return '';
+            }else{
+                return '新增UserForSync失敗';
+            }
+            
+        
+        }else{
+            return '部門 ' . $code . ' 不存在';
+        }
+
+        
+        
+    }
+
     private function saveUserForSync($values)
     {
         $exist_record=$this->existUserForSync($values['LoginAccount']);

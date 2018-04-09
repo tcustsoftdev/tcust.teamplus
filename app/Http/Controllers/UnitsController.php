@@ -14,15 +14,28 @@ class UnitsController extends Controller
    
     public function __construct(UnitsService $unitsService) 
     {
-		 $this->unitsService=$unitsService;
-	}
-   
+       
+        $this->test='ikik';
+        $this->units=$unitsService;
+       
+    }
     
-    protected function index()
+    public function index()
     {
+        dd($this->units);
         $request = request();
 
         $units=$this->units->getAll()->get();
+
+        return response()->json($units);
+    }
+
+    //api
+    public function tree()
+    {
+        dd($this->units);
+        dd($this->unitsService);
+        $units = $this->$unitsService->getTree();
 
         return response()->json($units);
     }

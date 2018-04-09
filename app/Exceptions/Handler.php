@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Exception;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -48,4 +49,19 @@ class Handler extends ExceptionHandler
     {
         return parent::render($request, $exception);
     }
+
+    protected function unauthenticated($request, AuthenticationException $exception)
+    {
+      
+        if ($request->expectsJson()) {
+            return response()->json(['error' => '權限不足','code' => 401 ], 401);
+        }
+
+        dd('權限不足');
+        $url= config('app.auth.dest'); 
+        return redirect()->to($url);
+
+        
+    }
+    
 }

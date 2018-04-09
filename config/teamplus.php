@@ -7,16 +7,22 @@ return [
     ],
 
     'system' => [
-        'api_key' => '59d20fa5-6d1e-4ff1-8a72-09697a63ab59',
+        'api_key' => 'b596d3f1-392d-41c4-87c5-eb5b0a8544bb',
         'api_sn' => 1,
-        'system_admin' => 'stephenchoe'
+        'company_admin' => 'tpowner'
     ],
 
     'notice' => [
        
-        'api_key' => '9ede4673a9ae40a9aea8d5aa8b14296a',        
-        'ch_sn' => 2,
-        'channel_id'=> '+886900000101',
+        'api_key' => '5deb3b4c67a7451c8709c201f4c02768',        
+        'ch_sn' => 1,
+        'channel_id'=> '+886900000101',  //table: SuperHubManager
+       
+       
+    ],
+
+    'user' => [
+        'password'=> '000000',
 
     ],
 

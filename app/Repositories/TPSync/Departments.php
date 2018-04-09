@@ -12,6 +12,8 @@ use Carbon\Carbon;
 
 class Departments 
 {
+  
+
     public function syncDepartments()
     {
         $records=GroupSync::orderBy('parent')->get();
@@ -67,13 +69,14 @@ class Departments
         $values['ParentCode']=$parent_code;
         $values['IsDelete']=$delete;
         
+        
         return $this->saveDepartmentForSync($values);
     }
     private function saveDepartmentForSync($values)
     {
        
-        $exist_record=$this->existDepartmentForSync($values['Name']);
-      
+        $exist_record=TPDepartmentForSync::where('Code',$values['Code'])->first();
+     
         if($exist_record){
            return  $exist_record->update($values);
         }else{
@@ -81,16 +84,11 @@ class Departments
         }
     }
     
-    public function existDepartmentForSync($code)
-    {
-          return TPDepartmentForSync::where('SyncStatus',0)
-                             ->where('Code',strtolower($code))->first();
-    }
-  
+   
 
     public function getTPDepartmentByCode($code)
     {
-         return TPDepartment::where('Code',strtolower($code))->first();
+        return TPDepartment::where('Code',$code)->first();
     }
     
 }

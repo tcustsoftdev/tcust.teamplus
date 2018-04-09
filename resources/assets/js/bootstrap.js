@@ -1,3 +1,5 @@
+import Vue from 'vue';
+window.Vue = Vue;
 
 window._ = require('lodash');
 window.Popper = require('popper.js').default;
@@ -10,8 +12,7 @@ window.Popper = require('popper.js').default;
 
 try {
     window.$ = window.jQuery = require('jquery');
-
-    require('bootstrap');
+    
 } catch (e) {}
 
 /**
@@ -54,3 +55,50 @@ if (token) {
 //     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 //     encrypted: true
 // });
+
+
+
+
+
+import Helper from './helper';
+window.Helper = Helper;
+
+import Form from './utilities/form';
+window.Form = Form;
+
+
+window.Bus = new Vue({});
+
+import Notice from './models/notice';
+window.Notice=Notice;
+
+
+Vue.filter('genderText', (gender)=> {
+    if (Helper.isTrue(gender)) return '男';
+    return '女';
+});
+Vue.filter('activeLabel', (active)=> {
+    return Helper.activeLabel(active);
+
+});
+Vue.filter('reviewedLabel', (reviewed)=> {
+    return Helper.reviewedLabel(reviewed);
+});
+
+Vue.filter('courseActiveLabel', (active)=> {
+    return Course.activeLabel(active);
+});
+
+Vue.filter('formatMoney', (val)=> {
+    return Helper.formatMoney(val);
+});
+
+Vue.filter('classTimesHtml', (course)=> {
+    return Course.classTimesHtml(course)
+});
+
+Vue.filter('signupStatusLabel', (status)=> {
+    return Signup.statusLabel(status)
+});
+
+

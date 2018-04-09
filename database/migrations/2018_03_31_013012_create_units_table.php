@@ -16,14 +16,22 @@ class CreateUnitsTable extends Migration
         Schema::create('units', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('parent')->unsigned()->default(0);
+
+            $table->integer('tp_id')->unsigned()->nullable();
             $table->string('code');	
 			$table->string('name');			
             $table->text('description')->nullable(); 
             $table->integer('order')->default(0);
+
+            $table->string('admin');
+            $table->text('level_ones')->nullable();
+            $table->text('level_twos')->nullable();
             $table->boolean('is_class')->default(false);
 
             $table->boolean('active')->default(true);
             $table->boolean('removed')->default(false);	
+           
+            $table->string('err')->nullable();		
             $table->timestamps();
         });
     }
