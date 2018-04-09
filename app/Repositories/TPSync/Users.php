@@ -147,7 +147,7 @@ class Users
        
         $code= $department;
         $tp_department= TPDepartment::where('Code',$code)->first();
-       
+        
         if($tp_department){
             $values=TPUserForSync::initialize();
             $values['LoginAccount']=$number;

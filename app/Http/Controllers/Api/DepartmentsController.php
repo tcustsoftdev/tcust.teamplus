@@ -105,7 +105,8 @@ class DepartmentsController extends Controller
 
 
         $this->syncTPDepartment($unit);
-      
+        
+        $this->unitsService->syncGroup($unit);
 
         return response()->json();
     }
@@ -135,6 +136,8 @@ class DepartmentsController extends Controller
         $delete=!$unit->active;
 
         $this->tpDepartments->syncDepartment($name, $code,$parent_code,$delete);
+    
+    
     }
 
     

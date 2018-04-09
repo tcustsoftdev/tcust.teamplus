@@ -136,6 +136,7 @@ class UnitsService
 
     public function syncGroup(Unit $unit)
     {
+      
         if($unit->tp_id)
         {
             $this->updateGroup($unit);
@@ -169,6 +170,9 @@ class UnitsService
        
         $team_id=$unit->tp_id;
         $members=$unit->users->pluck('number')->toArray();
+        if(!in_array($this->company_admin, $members)){
+            array_push( $members, $this->company_admin);
+        }
      
         $owner='';
         $manager=$unit->admin;

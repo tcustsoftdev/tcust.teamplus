@@ -26,10 +26,8 @@ class UsersController extends Controller
     public function store()
     {
         $request=request();
-        
 
         $key=$request->api_key;
-       
       
         if($key!=$this->api_key)
         {
@@ -66,7 +64,7 @@ class UsersController extends Controller
 
     function syncTPUser($user)
     {
-      
+        
         $number=$user->number;
        
         $password='';
