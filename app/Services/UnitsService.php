@@ -19,7 +19,7 @@ class UnitsService
     }
     public function getUnitByCode($code)
     {
-        return $this->getAll()->where('code',$code)->first();
+        return $this->getAll()->where('code', strtolower($code))->first();
     }
     private function getParentId($parent_code)
     {
@@ -33,6 +33,8 @@ class UnitsService
          return $this->getAll()->where('active',true)
                                ->where('parent',0);                     
     }
+
+    
 
     public function getChildrenIds($id)
     {

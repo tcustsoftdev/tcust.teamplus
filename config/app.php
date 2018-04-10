@@ -12,7 +12,7 @@ return [
     'school' => [
         'api_key' => '',
         'source' => '',
-        'subs_api' => 'http://tcust.teamplus/subs',
+        'subs_api' => '',
         
     ],
 

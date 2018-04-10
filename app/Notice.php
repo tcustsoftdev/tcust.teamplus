@@ -15,7 +15,8 @@ class Notice extends BaseModel
     {
          return [
 			'unit_id' => '',
-            'content' => '',
+			'content' => '',
+			
 			'staff' => false,
 			'teacher' => false,
 			'student' => false,

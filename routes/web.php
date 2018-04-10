@@ -13,13 +13,7 @@ Route::post('/subs', function () {
 });
 
 Route::get('/', function () {
-    $members=['ss355','ss678'];
-    if(!in_array("ss3cc55", $members)){
-        array_push( $members, 'ikikik');
-    }
-  dd($members);
-    // $service =new \App\Repositories\Teamplus\Groups();
-    // $service->create(['ss355'],'','ss355','plpcsssssssl');
+   
 
 
 });

@@ -47,23 +47,24 @@ class NoticesController extends Controller
 
     function getManagers(Unit $unit)
     {
-        // $level_ones =  $unit->topManagers(); 
+        $level_ones =  $unit->topManagers(); 
 
-        // $url= $this->subs_api_url;
+        $level_ones= explode(',',$level_ones);   
+
+        $url= $this->subs_api_url;
+        if(!$url) return $canReviewUsers;
       
-        // $client = new Client(); 
-        // $response = $client->request('POST', $url, [
-        //     'form_params' => [
-        //         'numbers' => $level_ones,
-        //     ]
-        // ]);
+        $client = new Client(); 
+        $response = $client->request('POST', $url, [
+            'form_params' => [
+                'numbers' => $level_ones,
+            ]
+        ]);
 
-        // $subs = json_decode($response->getBody());
+        $subs = json_decode($response->getBody());
 
-        // $level_ones = explode(',',$level_ones);      
-
-        // return array_merge($subs,$level_ones);
-        return ['ss355'];
+        return array_merge($subs,$level_ones);
+      
         
     }
 
@@ -81,7 +82,8 @@ class NoticesController extends Controller
         } 
 
         $currentUser=$this->currentUser();
-        //最高主管與代理人
+        
+        //一級主管與代理人
         $managers = $this->getManagers($notice->unit);
 
        
@@ -96,99 +98,18 @@ class NoticesController extends Controller
         
         return [
             'canEdit' => $canEdit,
-            'canReview' => true,// $canReview,
+            'canReview' => $canReview,
             'canDelete' => $canDelete,
         ];
       
     }
 
-    function departmentsApi()
-    {
-        $url= 'http://tcust.teamplus/api/departments';
-      
-        $client = new Client(); 
-        $response = $client->request('POST', $url, [
-            'form_params' => [
-                'api_key' => 'weIwPGThqBjLeopYstJ6Hc1P2tT1aOgN',
-                'is_delete' => 0,
-                'name' => '電算中心',
-                'parent' => '',
-                'code' => '118000',
-                'admin' => 'a12367878',
-                'level_ones' => 'a12345878,na12347878',
-                'level_twos' => 'ccs12347878,sj12347878',
-                'is_class' => 0,
-                'teachers' => '',
-                'staffs' => 'ss389,na12347878,ccs12347878,sj12347878',
-                'students' => '',
-            ]
-        ]);
-
-        $client = new Client(); 
-        $response = $client->request('POST', $url, [
-            'form_params' => [
-                'api_key' => 'weIwPGThqBjLeopYstJ6Hc1P2tT1aOgN',
-                'is_delete' => 0,
-                'name' => '軟體開發組',
-                'parent' => '118000',
-                'code' => '118010',
-                'admin' => 'a1234567878',
-                'level_ones' => 'a1234567878,na1234567878',
-                'level_twos' => 'ccs1234567878,sj1234567878',
-                'is_class' => 0,
-                'teachers' => '',
-                'staffs' => 'ss355,na1234567878,ccs1234567878,sj1234567878',
-                'students' => '',
-            ]
-        ]);
-
-        
-    }
-
-    function usersApi()
-    {
-        $url= 'http://tcust.teamplus/api/users';
-      
-        $client = new Client(); 
-        $response = $client->request('POST', $url, [
-            'form_params' => [
-                'api_key' => 'weIwPGThqBjLeopYstJ6Hc1P2tT1aOgN',
-               
-                'name' => '何金水',
-                'number' => 'ss355',
-                'dob' => '680312',
-                'email' => 'ss355@tcust.edu.tw',
-                
-                'active' => 1,
-               
-            ]
-        ]);
-        
-      
-
-        $client = new Client(); 
-        $response = $client->request('POST', $url, [
-            'form_params' => [
-                'api_key' => 'weIwPGThqBjLeopYstJ6Hc1P2tT1aOgN',
-
-                'name' => '何金銀',
-                'number' => 'ss389',
-                'dob' => '700619',
-                'email' => 'ss389@tcust.edu.tw',
-                
-                'active' => 0,
-            ]
-        ]);
-
-        
-        
-    }
     
     
     
     public function index()
     { 
-       
+
         $request=request();
 
         $unit=0;
@@ -356,7 +277,9 @@ class NoticesController extends Controller
         $notice->save();
 
         
-
+        //審核通過,發送訊息
+        $this->noticeService->sendNotice($notice);
+        
         return redirect('/notices'); 
     }
 

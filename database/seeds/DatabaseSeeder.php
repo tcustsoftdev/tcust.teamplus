@@ -37,6 +37,7 @@ class DatabaseSeeder extends Seeder
             'active' => true,
             'removed' => false,
        ]);
+
     }
 
     function seedNotices()
@@ -68,6 +69,6 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->seedUnits();
-        $this->seedNotices();
+       
     }
 }
