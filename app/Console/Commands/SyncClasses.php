@@ -48,6 +48,8 @@ class SyncClasses extends Command
      */
     public function handle()
     {
+        Log::info('Sync Classes Has Done.');
+        return;
         ini_set('max_execution_time', 1200);
         
         //更新現有班級狀態

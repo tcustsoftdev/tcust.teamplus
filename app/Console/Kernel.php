@@ -41,6 +41,14 @@ class Kernel extends ConsoleKernel
 
     protected function schedule(Schedule $schedule)
     {
+        $schedule->command('sync:classes')->dailyAt('08:15'); //與學校班級資料同步  
+        $schedule->command('sync:departments')->dailyAt('08:30'); //與Teamplus部門資料同步
+             
+    }
+
+    protected function xxschedule(Schedule $schedule)
+    {
+      
         $schedule->command('sync:units')->dailyAt('00:00'); //與學校單位資料同步 
         $schedule->command('sync:classes')->dailyAt('00:15'); //與學校班級資料同步  
 
