@@ -50670,7 +50670,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     watch: {},
     methods: {
         detailsUrl: function detailsUrl(notice) {
-            return 'notices/' + notice.id;
+            return '/notices/' + notice.id;
         },
         remove: function remove(notice) {
             this.$emit('remove', notice);

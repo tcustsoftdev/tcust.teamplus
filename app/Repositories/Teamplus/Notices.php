@@ -100,7 +100,8 @@ class Notices extends BaseTeamPlusRepo
         
         $url= $this->api_url . '/SuperHubService.ashx?ask=sendMessage';
       
-       // $this->checkReceivers($accounts);
+      
+        $this->checkReceivers($accounts);
         $client = new Client(); 
         $response = $client->request('POST', $url, [
             'form_params' => [

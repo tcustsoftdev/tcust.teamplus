@@ -13,15 +13,25 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        Commands\SyncDepartments::class, //OK
-
-        Commands\SyncUnits::class,  //OK
-        Commands\SyncClasses::class,  //OK
         
-        Commands\SyncGroups::class, //OK
 
-        Commands\SyncStaff::class,    //OK
-        Commands\SyncStudents::class,  //OK
+        Commands\SyncUnits::class,  
+        Commands\SyncClasses::class,  
+
+        Commands\SyncDepartments::class, 
+
+
+
+        Commands\SyncStaff::class,    
+        Commands\SyncStudents::class,  
+
+        Commands\SyncUsers::class, 
+
+        
+        
+        Commands\SyncGroups::class,
+
+        
         
        
         
@@ -31,19 +41,19 @@ class Kernel extends ConsoleKernel
 
     protected function schedule(Schedule $schedule)
     {
-       
-       
-        
-        $schedule->command('sync:classes')->dailyAt('00:00');
-        $schedule->command('sync:units')->dailyAt('00:30');
-        $schedule->command('sync:departments')->dailyAt('01:00');
+        $schedule->command('sync:units')->dailyAt('00:00'); //與學校單位資料同步 
+        $schedule->command('sync:classes')->dailyAt('00:15'); //與學校班級資料同步  
+
+        $schedule->command('sync:departments')->dailyAt('00:30'); //與Teamplus部門資料同步
 
         
-        $schedule->command('sync:staff')->dailyAt('01:30');
-        $schedule->command('sync:students')->dailyAt('02:00');
+        $schedule->command('sync:staff')->dailyAt('01:00'); //與學校教職員資料同步
+        $schedule->command('sync:students')->dailyAt('01:30'); //與學校學生資料同步 
+
+        $schedule->command('sync:users')->dailyAt('02:00'); //與Teamplus使用者資料同步 
 
         
-        $schedule->command('sync:group')->dailyAt('05:00');
+        $schedule->command('sync:groups')->dailyAt('06:00');
         
              
     }

@@ -24,7 +24,7 @@ class Groups extends BaseTeamPlusRepo
           
     }
 
-    
+   
     
     public function create(array $members, $owner, $manager ,$name)
     {
@@ -35,9 +35,7 @@ class Groups extends BaseTeamPlusRepo
         $description=$name . '成員的訊息交換平台';
 
         if(!$owner) $owner=$this->company_admin;
-
         
-
        
         $client = new Client(); 
         $response = $client->request('POST', $url, [
@@ -60,7 +58,7 @@ class Groups extends BaseTeamPlusRepo
         return $body->TeamSN;
 
     }
-    public function update($team_id ,$operator, $name)
+    public function update($team_id , $name)
     {
        
         $url= $this->api_url . '/SystemService.ashx?ask=modifyTeamInfo';
@@ -68,8 +66,7 @@ class Groups extends BaseTeamPlusRepo
         $subject=$name . '成員專屬團隊';
         $description=$name . '成員的訊息交換平台';
 
-        if(!$operator) $operator=$this->company_admin;
-        
+        $operator=$this->company_admin;
         
         $client = new Client(); 
         $response = $client->request('POST', $url, [
@@ -109,7 +106,8 @@ class Groups extends BaseTeamPlusRepo
     
     public function addMembers(array $members,$team_id)
     {
-       
+        
+        
         $url= $this->api_url . '/SystemService.ashx?ask=inviteTeamMember';
        
         $client = new Client(); 
@@ -131,7 +129,7 @@ class Groups extends BaseTeamPlusRepo
     }
     public function removeMembers(array $members,$team_id)
     {
-    
+       
         $url= $this->api_url . '/SystemService.ashx?ask=deleteTeamMember';
 
         $client = new Client(); 
@@ -151,7 +149,7 @@ class Groups extends BaseTeamPlusRepo
 
     public function addManager($team_id,$manager)
     {
-      
+        
         $url= $this->api_url . '/SystemService.ashx?ask=assignTeamManager';
 
         $manager_list=[$manager];
@@ -175,6 +173,7 @@ class Groups extends BaseTeamPlusRepo
     }
     public function removeManager($team_id,$manager)
     {
+        
         if($manager==$this->company_admin) return;
 
         $url= $this->api_url . '/SystemService.ashx?ask=cancelTeamManager';

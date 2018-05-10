@@ -1,42 +1,67 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Http\Controllers;
 
-use Illuminate\Console\Command;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\PSN\SchoolDepartment;
+use App\PSN\Staff;
+use App\Services\UnitsService;
+use App\Services\ClassesService;
 use App\Unit;
 use App\User;
-use App\Services\UnitsService;
-use App\Services\Teamplus\GroupService;
+use App\Student\Student;
+use App\Repositories\Schools;
+use App\Repositories\TPSync\Departments;
+use App\Repositories\TPSync\Users;
+use App\Teamplus\TPUserForSync;
 use App\Repositories\Teamplus\Groups;
-use Log;
 
-class SyncGroups extends Command
+class TestController extends Controller
 {
-    
-    protected $signature = 'sync:groups';
-
    
-    protected $description = 'Sync Groups';
-
-    
-    public function __construct(UnitsService $unitsService,Groups  $groups)
+    public function __construct(UnitsService $unitsService,Schools $schools,ClassesService $classesService,
+            Departments $departments, Users $TPUsers, Groups  $groups) 
     {
-        parent::__construct();
-
+       
         $this->units=$unitsService;
+        $this->classesService=$classesService;
+        $this->schools=$schools;
+        $this->departments=$departments;
+        $this->TPUsers=$TPUsers;
         $this->groups=$groups;
 
         $this->company_admin=config('teamplus.system.company_admin');
-      
+        
+       
     }
 
-    /**
-     * Execute the console command.
-     *
-     * @return mixed
-     */
-    public function handle()
+    public function test()
     {
+        ini_set('max_execution_time', 1200);
+        
+        $code='118000';
+        $unit=Unit::where('code',$code)->first();
+
+        $subs=[];
+        if($unit->rootUnit()){
+            $subs=$this->schools->getDepartmentSubsByCode($unit->rootUnit()->code);
+        }else{
+            $subs=$this->schools->getDepartmentSubsByCode($code);
+        }
+
+        dd($unit->rootUnit());
+
+        $schoolDepartment=$this->schools->getSchoolDepartmentByCode($code);
+        dd($schoolDepartment->getAgents());
+        
+        
+    }
+
+    public function syncGroups()
+    {
+        
         $allUnits=Unit::all();
         foreach($allUnits as $unit){
             if((int)$unit->tp_id){
@@ -45,11 +70,6 @@ class SyncGroups extends Command
                 $this->createGroup($unit);
             }
         }
-
-        $text='Sync Groups Has Done.';
-        Log::info($text);
-       
-        $this->info($text);
     }
 
     function createGroup(Unit $unit)
@@ -159,5 +179,11 @@ class SyncGroups extends Command
        
     }
 
+   
 
+    
+   
+    
+    
+   
 }

@@ -25,8 +25,10 @@ class SessionsController extends Controller
 		$unit_code = $_POST['unit'];
 		$role = $_POST['role'];
 
+		
+
 		$login=$this->authService->login($number,$unit_code,$role);
-	
+		
 
 		if($login){
 			return redirect('/notices');

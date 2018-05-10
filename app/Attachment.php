@@ -40,6 +40,12 @@ class Attachment extends BaseModel
     public function notice() 
 	{
 		return $this->belongsTo('App\Notice');
-    }
+	}
+	
+	public function getReadName()
+	{
+		if($this->title) return $this->title . '.' . $this->type;
+		return $this->name;
+	}
 	
 }

@@ -13,6 +13,7 @@ use App\Repositories\TPSync\Users;
 use App\Unit;
 use App\User;
 use Log;
+use App\PSN\SchoolDepartment;
 
 class DepartmentsController extends Controller
 {
@@ -38,6 +39,11 @@ class DepartmentsController extends Controller
 
         //$this->unitsService->syncGroup($unit);
        
+    }
+
+    function syncSchoolDepartment()
+    {
+        $schoolDepartments=SchoolDepartment::orderBy('fDptLeve')->get();
     }
 
     

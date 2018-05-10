@@ -142,36 +142,22 @@ class Users
         
     }
 
-    public function syncUser($number, $password ,$email, $name, $department, $status)
+    public function syncUser($number, $password ,$email, $name, $departmentCode, $status)
     {
-       
-        $code= $department;
-        $tp_department= TPDepartment::where('Code',$code)->first();
-        
-        if($tp_department){
-            $values=TPUserForSync::initialize();
-            $values['LoginAccount']=$number;
-            $values['Password']=$password;
-            
-            $values['Email']=$email;
-            $values['EmpID']=$number;
-            $values['Name']=$name;
-            $values['DeptCode']= $tp_department->Code;
-         
-            $values['Status']=$status;
-            
-            $save = $this->saveUserForSync($values);
-            if($save){
-                return '';
-            }else{
-                return '新增UserForSync失敗';
-            }
-            
-        
-        }else{
-            return '部門 ' . $code . ' 不存在';
-        }
+        $departmentCode=strtolower($departmentCode);
 
+        $values=TPUserForSync::initialize();
+        $values['LoginAccount']=$number;
+        $values['Password']=$password;
+        
+        $values['Email']=$email;
+        $values['EmpID']=$number;
+        $values['Name']=$name;
+        $values['DeptCode']= $departmentCode;
+        
+        $values['Status']=$status;
+        
+        return TPUserForSync::create($values);
         
         
     }
@@ -192,12 +178,22 @@ class Users
          return TPDepartment::where('Name',$name)->first();
     }
     
+    public function getTPUserByAccount($account)
+    {
+        return TPUser::where('LoginName',$account)->first();
+    }
 
+    public function isUserExist($account)
+    {
+         if($this->getTPUserByAccount($account)) return true;
+         return false;
+    }
    
     public function userExist($account)
     {
           return TPUser::where('LoginName',$account)->first();
     }
+
     public function existUserForSync($account)
     {
           return TPUserForSync::where('SyncStatus',0)

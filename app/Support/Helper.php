@@ -16,6 +16,10 @@ class Helper
         return strrpos($haystack, $needle) + strlen($needle) ===
             strlen($haystack);
     }
+    public static function  removeExtention($filename)
+    {
+        return preg_replace('/\\.[^.\\s]{3,4}$/', '', $filename);
+    }
 
     public static function isTrue($val)
     {
@@ -57,10 +61,7 @@ class Helper
         return $str;
     }
 
-    public static function removeExtention($filename)
-    {
-        return preg_replace('/.[^.]*$/', '', $filename);
-    }
+   
     
     
 

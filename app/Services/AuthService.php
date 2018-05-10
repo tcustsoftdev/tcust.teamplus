@@ -10,11 +10,12 @@ class AuthService
 {
     public function __construct()
     {
-        $this->password = 'secret';
+        $this->password = config('app.auth.password');
     }
     public function createUser($number,$unit_id,$role)
     {
         $user=$this->findUser($number);
+       
         if($user){
             $user->update([
                 'unit_id' => $unit_id,

@@ -6,7 +6,8 @@ return [
     ],
     'auth' => [
         'source' => '',
-        'dest' => 'https://www.google.com.tw/'
+        'dest' => 'https://www.google.com.tw/',
+        'password' => 'secret'
     ],
 
     'school' => [

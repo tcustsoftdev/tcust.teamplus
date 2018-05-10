@@ -3,8 +3,9 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-
-use App\Repositories\TPSync\Users;
+use App\User;
+use App\Services\ClassesService;
+use App\Repositories\Schools;
 use Log;
 
 class SyncStudents extends Command
@@ -28,22 +29,77 @@ class SyncStudents extends Command
      *
      * @return void
      */
-    public function __construct(Users $users)
+    public function __construct(Schools $schools,ClassesService $classesService) 
     {
         parent::__construct();
 
-        $this->users = $users;
+        $this->classesService=$classesService;
+        $this->schools=$schools;
     }
+    
 
-    /**
-     * Execute the console command.
-     *
-     * @return mixed
-     */
     public function handle()
     {
-        $this->users->syncStudents();
+        ini_set('max_execution_time', 1200);
+
+        //更新現有學生狀態
+        $existStudentUsers=User::where('role','Teacher')->get();
+        foreach($existStudentUsers as $studentUser){
+            //取得對應之學校學生資料
+            $studentNumber=$studentUser->number;
+            $schoolStudent= $this->schools->getStudentByNumber($studentNumber);
+            if($schoolStudent){
+                $studentUser->active=$schoolStudent->isActive();
+            }else{
+                $studentUser->active=false;
+            }
+
+            $studentUser->save();
+        }
+
+        $this->syncStudentsByClasses();
+
         Log::info('Sync Students Has Done.');
         $this->info('Sync Students Has Done.');
+    }
+
+    function syncStudentsByClasses()
+    {
+        $allClasses = $this->classesService->getAll()->get();
+        
+        foreach($allClasses as $classEntity){
+            
+            //取得學校學生資料
+            $studentsInClass=$this->schools->getStudentsByClass($classEntity->code)->get();
+           
+            $studentsInClass = $studentsInClass->filter(function ($item) {
+                return $item->isActive();
+            })->all();
+            
+           
+
+            foreach($studentsInClass as $schoolStudent){
+                
+                $userValues=User::initFromSchoolStudent($schoolStudent);
+                $userValues['unit_id'] = $classEntity->id;
+
+                $this->createOrUpdateUser($userValues);
+
+            }
+            
+        }
+    }
+
+    function createOrUpdateUser(array $userValues)
+    {
+        $number=$userValues['number'];
+        $user=User::where('number',$number)->first();
+        if($user){
+            $user->update($userValues);
+        }else{
+           
+            $userValues['password'] = config('app.auth.password');
+            User::create($userValues);
+        }
     }
 }

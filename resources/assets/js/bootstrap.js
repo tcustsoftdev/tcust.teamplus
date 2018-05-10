@@ -58,8 +58,6 @@ if (token) {
 
 
 
-
-
 import Helper from './helper';
 window.Helper = Helper;
 

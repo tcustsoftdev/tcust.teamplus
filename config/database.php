@@ -45,6 +45,28 @@ return [
         ],
 
 
+        'sqlsrv_student' => [
+            'driver' => 'sqlsrv',
+            'host' => env('DB_STUDENT_HOST', 'localhost'),
+            'port' => env('DB_STUDENT_PORT', '1433'),
+            'database' => env('DB_STUDENT_DATABASE', 'forge'),
+            'username' => env('DB_STUDENT_USERNAME', 'forge'),
+            'password' => env('DB_STUDENT_PASSWORD', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+        ],
+
+        'sqlsrv_PSN' => [
+            'driver' => 'sqlsrv',
+            'host' => env('DB_PSN_HOST', 'localhost'),
+            'port' => env('DB_PSN_PORT', '1433'),
+            'database' => env('DB_PSN_DATABASE', 'forge'),
+            'username' => env('DB_PSN_USERNAME', 'forge'),
+            'password' => env('DB_PSN_PASSWORD', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+        ],
+
         'sqlsrv_teamplus' => [
             'driver' => 'sqlsrv',
             'host' => env('DB_TEAMPLUS_HOST', 'localhost'),

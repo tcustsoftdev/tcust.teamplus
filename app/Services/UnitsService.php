@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Unit;
+use App\User;
 use App\Repositories\Teamplus\Groups;
 
 class UnitsService
@@ -21,9 +22,32 @@ class UnitsService
     {
         return $this->getAll()->where('code', strtolower($code))->first();
     }
+    public function getUnitsByCodes(array $codes)
+    {
+        $codes=array_map(function($item){
+            return strtolower($item);
+        }, $codes);
+        return $this->getAll()->whereIn('code', $codes);
+    }
+
+    public function getTeachersByUnitIds(array $unitIds)
+    {
+        $roleName=User::teacherRoleName();
+        
+        return User::whereIn('unit_id',$unitIds)->where('role',$roleName);
+    }
+
+    public function getStaffsByUnitIds(array $unitIds)
+    {
+        $roleName=User::staffRoleName();
+        
+        return User::whereIn('unit_id',$unitIds)->where('role',$roleName);
+    }
+
+
     private function getParentId($parent_code)
     {
-        $parent= Unit::where('code',$parent_code)->first();
+        $parent= $this->getUnitByCode($parent_code);
         if($parent) return $parent->id;
         return 0;
     }
@@ -62,7 +86,7 @@ class UnitsService
        
         if(count($units)){
             foreach ($units as $unit) {
-               $unit->getChildren();
+               $unit->getChildren($hideMembers=true,$is_class=false);
             }
         }
 

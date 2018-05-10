@@ -68,7 +68,7 @@ export default {
 	},
     methods:{
         detailsUrl(notice){
-            return  `notices/${notice.id}`;
+            return  `/notices/${notice.id}`;
         },
         remove(notice){
             this.$emit('remove' , notice);

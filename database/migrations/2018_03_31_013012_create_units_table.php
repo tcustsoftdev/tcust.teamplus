@@ -23,7 +23,7 @@ class CreateUnitsTable extends Migration
             $table->text('description')->nullable(); 
             $table->integer('order')->default(0);
 
-            $table->string('admin');
+            $table->string('admin')->nullable();
             $table->text('level_ones')->nullable();
             $table->text('level_twos')->nullable();
             $table->boolean('is_class')->default(false);
@@ -31,8 +31,7 @@ class CreateUnitsTable extends Migration
             $table->boolean('active')->default(true);
             $table->boolean('removed')->default(false);	
            
-            $table->string('err')->nullable();		
-            $table->timestamps();
+            $table->string('err')->nullable();	
         });
     }
 

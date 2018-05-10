@@ -12,6 +12,7 @@ use App\Attachment;
 use App\Core\PagedList;
 use App\Services\UnitsService;
 use App\Support\Helper;
+use App\Repositories\Schools;
 use DB;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
@@ -22,18 +23,19 @@ use App\Repositories\TPSync\Users;
 class NoticesController extends Controller
 {
    
-    public function __construct(NoticeService $noticeService,UnitsService $unitsService,Users $tpUsers) 
+    public function __construct(NoticeService $noticeService,UnitsService $unitsService,
+                                Schools $schools,Users $tpUsers) 
     {
         $this->subs_api_url=config('app.school.subs_api');
         $this->noticeService=$noticeService;
         $this->unitsService=$unitsService;
-
+        $this->schools=$schools;
         $this->tpUsers=$tpUsers;
     }
 
     function unitOptions($withEmpty=true)
     {
-        $units= $this->unitsService->getAll()->orderBy('code')->get();
+        $units = $this->unitsService->getAll()->orderBy('code')->get();
         
         $options = $units->map(function ($unit) {
             return ['text'=> $unit->name , 'value' => $unit->id ];
@@ -47,30 +49,27 @@ class NoticesController extends Controller
 
     function getManagers(Unit $unit)
     {
-        $level_ones =  $unit->topManagers(); 
+       
+        $topManager =  $unit->topManager(); 
+       
+        $subs=[];
+        if($unit->rootUnit()){
+            $subs=$this->schools->getDepartmentSubsByCode($unit->rootUnit()->code);
+        }else{
+            $subs=$this->schools->getDepartmentSubsByCode($unit->code);
+        }
 
-        $level_ones= explode(',',$level_ones);   
+        if(!in_array($topManager, $subs)){
+            array_push($subs, $topManager);
+        }
 
-        $url= $this->subs_api_url;
-        if(!$url) return $canReviewUsers;
-      
-        $client = new Client(); 
-        $response = $client->request('POST', $url, [
-            'form_params' => [
-                'numbers' => $level_ones,
-            ]
-        ]);
-
-        $subs = json_decode($response->getBody());
-
-        return array_merge($subs,$level_ones);
-      
+        return $subs;
         
     }
 
     function setAuthority($notice)
     {
-       
+        
         if(Helper::isTrue($notice->reviewed)){
          
             return [
@@ -82,13 +81,14 @@ class NoticesController extends Controller
         } 
 
         $currentUser=$this->currentUser();
+       
         
-        //一級主管與代理人
+        //主管與代理人
         $managers = $this->getManagers($notice->unit);
-
        
         $canReview = in_array($currentUser->number, $managers);
 
+        $canEdit=false;
         if($notice->created_by == $currentUser->number)  $canEdit=true;
         if(!$canEdit)   $canEdit = $canReview;
        
@@ -109,7 +109,7 @@ class NoticesController extends Controller
     
     public function index()
     { 
-
+      
         $request=request();
 
         $unit=0;
@@ -239,7 +239,18 @@ class NoticesController extends Controller
 
         return redirect('/notices');
     }
+    public function destroy($id) 
+    {
+        $notice=Notice::findOrFail($id);
 
+        $authority=$this->setAuthority($notice);
+
+        if(!$authority['canDelete']) abort(500);   //dd('資料無法修改');
+
+        $notice->delete();
+
+        return response()->json();
+    }
    
 
     public function deleteAttachment($id)
@@ -256,8 +267,11 @@ class NoticesController extends Controller
        
     }
 
+    
+
     public function approve()
     {
+       
         $id=$_POST['Id'];
         $notice = Notice::findOrFail($id);
 
@@ -396,10 +410,16 @@ class NoticesController extends Controller
 
         $file_name = $_FILES['Attachment']['name'];
         $file_ext = pathinfo($file_name, PATHINFO_EXTENSION);
-        $file_title = $file_name;
+        $file_title = '';
         if (isset($_POST['Attachment_Title'])){
             $file_title =$_POST['Attachment_Title'];
         } 
+
+        if(!$file_title) $file_title = $file_name;
+        if(Helper::str_ends_with($file_title,$file_ext))
+        {
+            $file_title=Helper::removeExtention($file_title);
+        }
 
         $file_data=base64_encode(file_get_contents($_FILES['Attachment']['tmp_name']));
 

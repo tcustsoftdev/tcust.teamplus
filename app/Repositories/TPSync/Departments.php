@@ -12,7 +12,7 @@ use Carbon\Carbon;
 
 class Departments 
 {
-  
+    
 
     public function syncDepartments()
     {
@@ -68,7 +68,6 @@ class Departments
         $values['Code']=$code;
         $values['ParentCode']=$parent_code;
         $values['IsDelete']=$delete;
-        
         
         return $this->saveDepartmentForSync($values);
     }

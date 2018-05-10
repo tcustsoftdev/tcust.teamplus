@@ -10,5 +10,10 @@ class TPUser extends TPModel
     protected $table = 'Users';
     public $timestamps = false;
 
+    public function isActive()
+    {
+        return $this->Status == 1;
+    }
+
     
 }

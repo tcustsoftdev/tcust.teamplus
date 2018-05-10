@@ -260,9 +260,9 @@
 
 @section('scripts')
 
-<script src="{{ asset('js/notices/treeview.js') }}"></script>
-<script src="{{ asset('js/notices/edit.js') }}"></script>
-
+<script  src="{{ asset('js/notices/treeview.js') }}"></script>
+<script  src="{{ asset('js/notices/edit.js') }}"></script>
+    
     <script type="text/babel">
 
     $(document).ready(function () {
