@@ -37,9 +37,7 @@ class SyncGroups extends Command
      */
     public function handle()
     {
-        $text='Sync Groups Has Done.';
-        Log::info($text);
-        return;
+        
         $allUnits=Unit::all();
         foreach($allUnits as $unit){
             if((int)$unit->tp_id){

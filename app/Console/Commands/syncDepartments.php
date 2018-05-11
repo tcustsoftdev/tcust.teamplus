@@ -43,9 +43,7 @@ class SyncDepartments extends Command
      */
     public function handle()
     {
-        Log::info('Sync Departments Has Done.');
-        return;
-
+        
         ini_set('max_execution_time', 1200);
         
         $unitsAndClasses=Unit::all();
