@@ -131,7 +131,7 @@ class NoticesController extends Controller
         $notices=$this->noticeService->fetchNotices($unit ,  $reviewed,$keyword);
 
       
-      
+     
         $pageList = new PagedList($notices,$page,$pageSize);
         
 
