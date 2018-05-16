@@ -2,7 +2,7 @@
 
 return [
     'api' =>[
-        'key' => 'weIwPGThqBjLeopYstJ6Hc1P2tT1aOgN'
+        'key' => env('API_KEY', ''),
     ],
     'auth' => [
         'source' => '',

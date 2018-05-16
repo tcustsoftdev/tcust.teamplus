@@ -7,14 +7,14 @@ return [
     ],
 
     'system' => [
-        'api_key' => 'b596d3f1-392d-41c4-87c5-eb5b0a8544bb',
+        'api_key' => env('TEAMPLUS_SYSTEM_API_KEY', ''),
         'api_sn' => 1,
         'company_admin' => 'tpowner'
     ],
 
     'notice' => [
        
-        'api_key' => '5deb3b4c67a7451c8709c201f4c02768',        
+        'api_key' => env('TEAMPLUS_NOTICE_API_KEY', ''),        
         'ch_sn' => 1,
         'channel_id'=> '+886900000101',  //table: SuperHubManager
        

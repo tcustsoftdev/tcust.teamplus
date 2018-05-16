@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 
 
-Route::get('/departments/test', '\App\Http\Controllers\Api\DepartmentsController@test');
+Route::post('/notices', '\App\Http\Controllers\Api\NoticesController@store');
 
 Route::post('/departments', '\App\Http\Controllers\Api\DepartmentsController@store');
 Route::post('/users', '\App\Http\Controllers\Api\UsersController@store');

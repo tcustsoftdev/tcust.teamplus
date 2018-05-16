@@ -1,5 +1,8 @@
 <?php
 
+Route::get('/test' , function(){
+    
+});
 
 Route::post('/auth', 'SessionsController@store');
 

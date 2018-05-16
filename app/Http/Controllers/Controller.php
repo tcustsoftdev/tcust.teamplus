@@ -28,6 +28,13 @@ class Controller extends BaseController
         
     }
 
+    protected function requestError($errors)
+    {
+       
+        return response() ->json(['errors'=> $errors ],422);
+       
+    }
+
     protected function getUserIpAddress(){
         if(!empty($_SERVER['HTTP_CLIENT_IP'])){
             //ip from share internet

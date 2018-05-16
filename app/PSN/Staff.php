@@ -36,6 +36,11 @@ class Staff extends BasePSNModel
         if($this->fBirthday) return trim($this->fBirthday);
         return $this->fBirthday;
     }
+    public function getSID()
+    {
+        if($this->fPsnId) return trim($this->fPsnId);
+        return $this->fPsnId;
+    }
 
     public function getCode()
     {

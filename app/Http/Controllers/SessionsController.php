@@ -20,6 +20,15 @@ class SessionsController extends Controller
 		Auth::logout();
 		
 		$ip=$this->getUserIpAddress();
+
+		$api_key='api_key';
+		if( isset($_POST['api_key']) ) $api_key=$_POST['api_key'];
+		
+
+
+		if($api_key!=config('app.api.key')){
+			dd('api_key錯誤');
+		}
 	
 		$number = $_POST['number'];
 		$unit_code = $_POST['unit'];

@@ -50,6 +50,7 @@ class DepartmentsController extends Controller
     
     public function store()
     {
+        dd('store');
         $request=request();
       
         $key=$request->api_key;

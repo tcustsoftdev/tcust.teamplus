@@ -49,19 +49,15 @@ class NoticesController extends Controller
 
     function getManagers(Unit $unit)
     {
+        
+        $topManager = $unit->topManager(); 
        
-        $topManager =  $unit->topManager(); 
-       
-        $subs=[];
-        if($unit->rootUnit()){
-            $subs=$this->schools->getDepartmentSubsByCode($unit->rootUnit()->code);
-        }else{
-            $subs=$this->schools->getDepartmentSubsByCode($unit->code);
-        }
+        $subs=$this->schools->getDailyAgents($topManager);
 
         if(!in_array($topManager, $subs)){
             array_push($subs, $topManager);
         }
+
 
         return $subs;
         

@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\PSN\Staff;
 use App\PSN\SchoolDepartment;
+use App\PSN\Agent;
 use App\Student\ClassTable;
 use App\Student\ClassDepartment;
 use App\Student\Student;
@@ -78,7 +79,7 @@ class Schools
         return Staff::where('fPsnMail',$number)->first();
     }
 
-    public  function getStaffNumberBySID($sid)
+    public function getStaffNumberBySID($sid)
     {
         $staff=$this->getStaffBySID($sid);
       
@@ -140,6 +141,26 @@ class Schools
                                     ->orderBy('frowno','desc')->first();
         if(!$classManager) return '';                            
         return $classManager->getTeacherSID();
+    }
+
+    public function getDailyAgents($number)
+    {
+        $date=Carbon::today();
+        $dateNumber = Helper::toDateNumber($date);
+
+        $staff=$this->getStaffByNumber($number);
+
+        $sid='';
+        if($staff)  $sid=$staff->getSID();
+
+        $agentSIDs=Agent::where('fPsnId',$sid)
+                            ->where('fDay','<=', $dateNumber )
+                            ->where('fDayE','>=', $dateNumber )
+                            ->pluck('fAgntPsn')->toArray();
+
+        $staffNumbers=$this->getStaffNumbersBySIDs($agentSIDs);
+
+        return $staffNumbers;
     }
 
     

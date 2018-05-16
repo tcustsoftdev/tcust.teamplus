@@ -37,6 +37,25 @@ class Helper
         return (bool)$val;
     }
 
+    public static function  toDateNumber(Carbon $date)
+    {
+        $strVal = $date->year - 1911;
+        $strVal .= static::getMonthDayString($date->month,$date->day);
+
+        return (int)$strVal;
+
+    }
+
+    public static function getMonthDayString(int $month, int $day)
+    {
+        $monthString= $month < 10 ? '0' . strval($month) : strval($month);
+       
+        $dayString= $day < 10 ? '0' . strval($day) : strval($day);
+      
+        return $monthString . $dayString;
+
+    }
+
     public static function array_has_dupes($array) 
     {
         return count($array) !== count(array_unique($array));
