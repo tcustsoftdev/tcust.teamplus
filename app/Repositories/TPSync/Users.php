@@ -144,6 +144,7 @@ class Users
 
     public function syncUser($number, $password ,$email, $name, $departmentCode, $status)
     {
+        
         $departmentCode=strtolower($departmentCode);
 
         $values=TPUserForSync::initialize();

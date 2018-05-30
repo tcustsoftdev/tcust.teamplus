@@ -29,8 +29,15 @@ class ClassTable extends BaseStudentModel
 
     }
 
+    public function isRealClass()
+    {
+        
+        return (int)$this->fSubjDgre > 0 ;
+    }
+
     public function isActive()
     {
+        if(!$this->isRealClass()) return false;
        
         if(!$this->fEday) return true;
         return (int)$this->fEday < 1 ;

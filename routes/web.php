@@ -1,8 +1,13 @@
 <?php
 
-Route::get('/test' , function(){
+// Route::get('/test' , function(){
     
-});
+// });
+
+
+
+Route::get('/test', 'TestController@test');
+
 
 Route::post('/auth', 'SessionsController@store');
 

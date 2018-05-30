@@ -62,7 +62,7 @@ class Syncusers extends Command
                 $existTPUser=$this->TPUsers->isUserExist($number);
 
                 
-                $password= $existTPUser ? '' : $user->password;
+                $password=$existTPUser ? '' : $user->dob;
                 $email=$user->email;
                 $name=$user->name;
                 $departmentCode=$unit->code;

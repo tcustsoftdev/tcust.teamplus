@@ -40,23 +40,71 @@ class TestController extends Controller
     public function test()
     {
         ini_set('max_execution_time', 1200);
-        
-        $code='118000';
-        $unit=Unit::where('code',$code)->first();
 
-        $subs=[];
-        if($unit->rootUnit()){
-            $subs=$this->schools->getDepartmentSubsByCode($unit->rootUnit()->code);
-        }else{
-            $subs=$this->schools->getDepartmentSubsByCode($code);
+        //更新現有職員與教師狀態
+        //$existStaffUsers=User::whereIn('role',['Staff','Teacher'])->get();
+
+        //$user=User::find(3226);
+
+        //$this->syncActive([$user]);
+       
+         //$this->syncActive($existStaffUsers);
+         //$this->syncStaffsByUnits();
+       
+        
+        
+    }
+
+    function syncActive($users)
+    {
+        foreach($users as $staffUser){
+
+           
+            //取得對應之學校職員/教師資料
+            $staffNumber=$staffUser->number;
+            $schoolStaff= $this->schools->getStaffByNumber($staffNumber);
+
+            
+           
+            if($schoolStaff){
+                $staffUser->active=$schoolStaff->isActive();
+            }else{
+                $staffUser->active=false;
+            }
+
+            $staffUser->save();
         }
 
-        dd($unit->rootUnit());
+    }
 
-        $schoolDepartment=$this->schools->getSchoolDepartmentByCode($code);
-        dd($schoolDepartment->getAgents());
-        
-        
+    function syncStaffsByUnits()
+    {
+        //$allUnits = $this->units->getAll()->get();
+
+        $unit=Unit::where('code','118000')->first();
+       
+        $allUnits=[$unit];
+        foreach($allUnits as $unit){
+            
+            //取得學校職員資料
+            $staffsInUnit=$this->schools->getStaffsByUnit($unit->code)->get();
+          
+           
+            $staffsInUnit = $staffsInUnit->filter(function ($item) {
+                return $item->isActive();
+            })->all();
+           
+
+            foreach($staffsInUnit as $schoolStaff){
+                
+                $userValues=User::initFromStaff($schoolStaff,$schoolStaff->getRole());
+                $userValues['unit_id'] = $unit->id;
+
+                $this->createOrUpdateUser($userValues);
+
+            }
+            
+        }
     }
 
     public function syncGroups()

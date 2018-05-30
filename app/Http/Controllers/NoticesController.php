@@ -168,7 +168,6 @@ class NoticesController extends Controller
         $entity = $this->noticeService->getById($id);
         if(!$entity) abort(404);
 
-        
 
         $model=$this->setAuthority($entity);
 
