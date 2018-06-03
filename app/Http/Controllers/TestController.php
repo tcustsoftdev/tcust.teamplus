@@ -54,7 +54,7 @@ class TestController extends Controller
             //取得學校職員資料
             $staffsInUnit=$this->schools->getStaffsByUnit($unit->code)->get();
 
-            foreach($staffsInUnit as $staschoolStaffff){
+            foreach($staffsInUnit as $schoolStaff){
                 if($schoolStaff->isActive()){
                     $this->syncSchoolStaff($schoolStaff,$unit);
                 }
