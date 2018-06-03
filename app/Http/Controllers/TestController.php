@@ -41,22 +41,25 @@ class TestController extends Controller
     {
         ini_set('max_execution_time', 1200);
        
-        //更新現有職員與教師狀態
-        $roles=[ User::staffRoleName(), User::teacherRoleName() ];
-        $existStaffUsers=User::whereIn('role',$roles)->get();
-        foreach($existStaffUsers as $staffUser){
-            $this->updateStaffStatus($staffUser);
+        //更新現有學生狀態
+        $role=User::studentRoleName();
+        $existStudentUsers=User::where('role',$role)->get();
+        foreach($existStudentUsers as $studentUser){
+            //取得對應之學校學生資料
+            $this->updateStudentStatus($studentUser);
         }
 
-        $allUnits = $this->units->getAll()->get();
-        foreach($allUnits as $unit){
+        $allClasses = $this->classesService->getAll()->get();
+        foreach($allClasses as $classEntity){
             
-            //取得學校職員資料
-            $staffsInUnit=$this->schools->getStaffsByUnit($unit->code)->get();
+            //取得學校學生資料
+            $studentsInClass=$this->schools->getStudentsByClass($classEntity->code)->get();
+           
 
-            foreach($staffsInUnit as $schoolStaff){
-                if($schoolStaff->isActive()){
-                    $this->syncSchoolStaff($schoolStaff,$unit);
+            foreach($studentsInClass as $schoolStudent){
+
+                if($schoolStudent->isActive()){
+                    $this->syncSchoolStudent($schoolStudent,$classEntity);
                 }
 
             }
@@ -64,30 +67,30 @@ class TestController extends Controller
         }
         
         
-        
     }
 
-    function syncSchoolStaff($schoolStaff,$unit)
+    
+   
+    function syncSchoolStudent($schoolStudent,$classEntity)
     {
-        $userValues=User::initFromStaff($schoolStaff,$schoolStaff->getRole());
-        $userValues['unit_id'] = $unit->id;
+        $userValues=User::initFromSchoolStudent($schoolStudent);
+        $userValues['unit_id'] = $classEntity->id;
         $userValues['active'] = true;
         $this->createOrUpdateUser($userValues);
     }
 
-
-    function updateStaffStatus($staffUser)
+    function updateStudentStatus($studentUser)
     {
-        //取得對應之學校職員/教師資料
-        $staffNumber=$staffUser->number;
-        $schoolStaff= $this->schools->getStaffByNumber($staffNumber);
-        if($schoolStaff){
-            $staffUser->active=$schoolStaff->isActive();
+        //取得對應之學校學生資料
+        $studentNumber=$studentUser->number;
+        $schoolStudent= $this->schools->getStudentByNumber($studentNumber);
+        if($schoolStudent){
+            $studentUser->active=$schoolStudent->isActive();
         }else{
-            $staffUser->active=false;
+            $studentUser->active=false;
         }
 
-        $staffUser->save();
+        $studentUser->save();
     }
 
     function createOrUpdateUser(array $userValues)
@@ -102,9 +105,6 @@ class TestController extends Controller
             User::create($userValues);
         }
     }
-
-   
-
     
    
     
