@@ -144,7 +144,7 @@ class Users
 
     public function syncUser($number, $password ,$email, $name, $departmentCode, $status)
     {
-        
+       
         $departmentCode=strtolower($departmentCode);
 
         $values=TPUserForSync::initialize();
@@ -186,6 +186,8 @@ class Users
 
     public function isUserExist($account)
     {
+    
+       
          if($this->getTPUserByAccount($account)) return true;
          return false;
     }

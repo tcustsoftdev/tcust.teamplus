@@ -54,16 +54,9 @@ class SyncClasses extends Command
         //更新現有班級狀態
         $existClasses=$this->classesService->getAll()->get();
         foreach($existClasses as $existClass){
-            //取得對應之學校班級資料
-            $code=$existClass->code;
-            $schoolClass= $this->schools->getSchoolClassByCode($code);
-            if($schoolClass){
-                $existClass->active=$schoolClass->isActive();
-            }else{
-                $existClass->active=false;
-            }
 
-            $existClass->save();
+            $this->updateClassStatus($existClass);
+            
         }
 
         //取得學校所有班級
@@ -77,23 +70,42 @@ class SyncClasses extends Command
            
             if(!$parent)  continue;
             
-            $unitValues =Unit::initFromSchoolClass($schoolClass,$parent);
-            
-            $managerNumber='';
-
-            $classCode=$unitValues['code'];
-            $classTeacher=$this->schools->getClassTeacher($classCode);
-            if($classTeacher)  $managerNumber=$classTeacher->getNumber();
-           
-            $unitValues['admin'] = $managerNumber;
-
-            $this->createOrUpdateClass($unitValues);
+            $this->syncSchoolClass($schoolClass);
             
         }
 
         
         Log::info('Sync Classes Has Done.');
         $this->info('Sync Classes Has Done.');
+    }
+
+    function updateClassStatus($existClass)
+    {
+        //取得對應之學校班級資料
+        $code=$existClass->code;
+        $schoolClass= $this->schools->getSchoolClassByCode($code);
+        if($schoolClass){
+            $existClass->active=$schoolClass->isActive();
+        }else{
+            $existClass->active=false;
+        }
+
+        $existClass->save();
+    }
+
+    function syncSchoolClass($schoolClass)
+    {
+        $unitValues =Unit::initFromSchoolClass($schoolClass,$parent);
+            
+        $managerNumber='';
+
+        $classCode=$unitValues['code'];
+        $classTeacher=$this->schools->getClassTeacher($classCode);
+        if($classTeacher)  $managerNumber=$classTeacher->getNumber();
+        
+        $unitValues['admin'] = $managerNumber;
+
+        $this->createOrUpdateClass($unitValues);
     }
 
     function createOrUpdateClass(array $unitValues)

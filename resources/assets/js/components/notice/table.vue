@@ -9,6 +9,7 @@
                         
                     
                         <th style="width:10%">建檔單位</th>
+                        <th style="width:10%">建檔人</th>
                         <th style="width:15%">建檔時間</th>
                        
                     </tr>
@@ -22,6 +23,7 @@
                             </a>
                         </td>
                         <td>{{  notice.unit.name }}</td>
+                         <td>{{  notice.created_by }}</td>
                         <td> {{ notice.created_at }}  </td>
                         
                     </tr>    

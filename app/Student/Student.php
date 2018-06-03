@@ -41,7 +41,7 @@ class Student extends BaseStudentModel
 
     public function getEmail()
     {
-        if($this->getCode()) return $this->getCode() . '@ems.tcust.edu.tw';
+        if($this->getCode()) return 's' . $this->getCode() . '@ems.tcust.edu.tw';
         return '';
     }
 

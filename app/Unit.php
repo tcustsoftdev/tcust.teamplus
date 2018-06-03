@@ -5,6 +5,7 @@ namespace App;
 use App\BaseModel;
 use App\PSN\SchoolDepartment;
 use App\Student\ClassTable;
+use App\Support\Helper;
 
 class Unit extends BaseModel
 {
@@ -98,6 +99,12 @@ class Unit extends BaseModel
 	public function users() 
 	{
 		return $this->hasMany(User::class);
+	}
+
+	public function isDepartment()
+	{
+		return Helper::str_starts_with($this->code,'2');
+		
 	}
 
 	public function getParent()

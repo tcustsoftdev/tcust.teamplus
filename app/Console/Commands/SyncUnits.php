@@ -56,17 +56,8 @@ class SyncUnits extends Command
         //更新現有單位狀態
         $existUnits=$this->units->getAll()->get();
         foreach($existUnits as $existUnit){
-            //取得對應之學校單位資料
-            $code=$existUnit->code;
-            $schoolDepartment= $this->schools->getSchoolDepartmentByCode($code);
-           
-            if($schoolDepartment){
-                $existUnit->active=$schoolDepartment->isActive();
-            }else{
-                $existUnit->active=false;
-            }
-
-            $existUnit->save();
+            
+            $this->updateUnitStatus($existUnit);
         }
 
         //取得學校所有單位
@@ -77,26 +68,50 @@ class SyncUnits extends Command
             if($schoolDepartment->isClass()) continue;
             if(!$schoolDepartment->isActive()) continue;
 
-            $parent=$this->schools->getParentSchoolDepartment($schoolDepartment);
-           
-            $unitValues = Unit::initFromSchoolDepartment($schoolDepartment,$parent);
-
-
-            $managerNumber=$this->schools->getStaffNumberBySID($schoolDepartment->getBoss());
-            $unitValues['admin'] = $managerNumber;
-
-            if($schoolDepartment->getLevel() == 1 ){
-                $unitValues['level_ones'] = $managerNumber;
-            }else{
-                $unitValues['level_twos'] = $managerNumber;
-            }
-
-            $this->createOrUpdateUnit($unitValues);
+            $this->syncSchoolDepartment($schoolDepartment);
             
         }
        
         Log::info('Sync Units Has Done.');
         $this->info('Sync Units Has Done.');
+    }
+
+     //更新現有單位狀態
+
+    function updateUnitStatus($existUnit)
+    {
+        $code=$existUnit->code;
+
+        //取得對應之學校單位資料
+        $schoolDepartment= $this->schools->getSchoolDepartmentByCode($code);
+        
+        if($schoolDepartment){
+            $existUnit->active=$schoolDepartment->isActive();
+        }else{
+            $existUnit->active=false;
+        }
+
+        $existUnit->save();
+    }
+
+    function syncSchoolDepartment($schoolDepartment)
+    {
+
+        $parent=$this->schools->getParentSchoolDepartment($schoolDepartment);
+       
+        $unitValues = Unit::initFromSchoolDepartment($schoolDepartment,$parent);
+
+
+        $managerNumber=$this->schools->getStaffNumberBySID($schoolDepartment->getBoss());
+        $unitValues['admin'] = $managerNumber;
+
+        if($schoolDepartment->getLevel() == 1 ){
+            $unitValues['level_ones'] = $managerNumber;
+        }else{
+            $unitValues['level_twos'] = $managerNumber;
+        }
+
+        $this->createOrUpdateUnit($unitValues);
     }
 
     function createOrUpdateUnit(array $unitValues)

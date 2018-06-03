@@ -50644,6 +50644,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: 'NoticeTable',
@@ -50718,6 +50720,8 @@ var render = function() {
                 _vm._v(" "),
                 _c("td", [_vm._v(_vm._s(notice.unit.name))]),
                 _vm._v(" "),
+                _c("td", [_vm._v(_vm._s(notice.created_by))]),
+                _vm._v(" "),
                 _c("td", [_vm._v(" " + _vm._s(notice.created_at) + "  ")])
               ])
             })
@@ -50742,6 +50746,8 @@ var staticRenderFns = [
         _c("th", [_vm._v("通知內容")]),
         _vm._v(" "),
         _c("th", { staticStyle: { width: "10%" } }, [_vm._v("建檔單位")]),
+        _vm._v(" "),
+        _c("th", { staticStyle: { width: "10%" } }, [_vm._v("建檔人")]),
         _vm._v(" "),
         _c("th", { staticStyle: { width: "15%" } }, [_vm._v("建檔時間")])
       ])

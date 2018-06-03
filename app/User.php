@@ -37,6 +37,12 @@ class User extends Authenticatable
     public function setPasswordAttribute($value) 
     {
 		$this->attributes['password'] = bcrypt($value);
+	}
+	
+	public function setRoleAttribute($value) 
+    {
+		if($value) $this->attributes['role'] = ucfirst($value);
+		
     }
 
     public static function initFromSchoolStudent(Student $student)
@@ -49,13 +55,18 @@ class User extends Authenticatable
 			'dob' => $profile->getDOB(),
 			'email' => $student->getEmail(),
 			'unit_id' => '',
-			'role' => 'Student',
+			'role' => static::studentRoleName(),
 		
 			'active' => $student->isActive() ,
 			'removed' => false,
 			
 			
 	   ];
+	}
+
+	public static function test()
+	{
+		return static::studentRoleName();
 	}
 
 	public static function initFromStaff(Staff $staff,$role)

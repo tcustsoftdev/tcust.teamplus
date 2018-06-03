@@ -108,6 +108,7 @@
             </div>
         </div>
     </div>
+
     <div class="row">
         <div class="col-md-12">
             <label>備註</label>
@@ -116,6 +117,20 @@
         </div>
 
     </div>
+
+    @if ($notice['Id'])
+
+    <div class="row">
+        <div class="col-md-3">
+            <label>建檔人</label>
+            <input class="form-control" type="text" value="<?php echo $notice['CreatedBy']; ?>"  />
+            
+        </div>
+
+    </div>
+
+    @endif
+    
     <div id="submit-buttons" class="row" style="padding-top:10px">
         <div class="col-md-6">
             <button class="btn btn-success" type="submit">
@@ -292,6 +307,7 @@
 
 
         $('#btn-select-done').click(function () {
+            var treeview = $("#treeview-members");
             onSelectDone();
         });
         $('#tree-select-all').click(function () {

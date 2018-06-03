@@ -15,3 +15,4 @@ Route::get('/classes', '\App\Http\Controllers\Api\ClassesController@index');
 Route::get('/classes/getByCodes/{codes}', '\App\Http\Controllers\Api\ClassesController@getByCodes');
 
 
+Route::get('/departments', '\App\Http\Controllers\Api\DepartmentsController@index');

@@ -32,7 +32,7 @@ class SessionsController extends Controller
 	
 		$number = $_POST['number'];
 		$unit_code = $_POST['unit'];
-		$role = $_POST['role'];
+		$role = ucfirst($_POST['role']);
 
 		
 

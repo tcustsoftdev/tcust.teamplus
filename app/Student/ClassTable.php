@@ -31,7 +31,6 @@ class ClassTable extends BaseStudentModel
 
     public function isRealClass()
     {
-        
         return (int)$this->fSubjDgre > 0 ;
     }
 

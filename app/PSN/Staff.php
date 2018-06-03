@@ -4,6 +4,7 @@ namespace App\PSN;
 
 use App\PSN\BasePSNModel;
 use Carbon\Carbon;
+use App\User;
 
 class Staff extends BasePSNModel
 {
@@ -14,14 +15,14 @@ class Staff extends BasePSNModel
 	public function getRole()
     {
         $type= strtolower(trim($this->fPsnType));
-        if($type=='sa') return 'Staff';  //正式職員
-        if($type=='ss') return 'Staff';  //約聘職員
+        if($type=='sa') return User::staffRoleName();  //正式職員
+        if($type=='ss') return User::staffRoleName();  //約聘職員
 
-        if($type=='st') return 'Teacher';  //正式教師
-        if($type=='sp') return 'Teacher';  //約聘教師
+        if($type=='st') return User::teacherRoleName();  //正式教師
+        if($type=='sp') return User::teacherRoleName();  //約聘教師
 
-        if($type=='sc') return 'Teacher';  //約聘教師
-        if($type=='si') return 'Staff';  //職員
+        if($type=='sc') return User::teacherRoleName();  //約聘教師
+        if($type=='si') return User::staffRoleName();   //職員
         
         
     }

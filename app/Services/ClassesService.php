@@ -12,6 +12,26 @@ class ClassesService
     {
         return Unit::where('is_class', true)->where('removed',false);
     }
+
+    public function getActiveClasses()
+    {
+        return $this->getAll()->where('active',false);
+
+        $parentIds=array_unique($this->getAll()->pluck('parent')->toArray());
+        $parents=Unit::whereIn('id',$parentIds)->get();
+        
+            
+       
+        if(count($parents)){
+            foreach ($parents as $parent) {
+               $parent->getChildren(true,true);
+            }
+        }
+        return $parents;
+
+        
+        
+    }
     public function getClassByCode($code)
     {
         return $this->getAll()->where('code', strtolower($code))->first();
@@ -37,13 +57,20 @@ class ClassesService
                                ->where('parent',0);                     
     }
 
-    public function getTree()
+    public function getDepartments()
     {
-       
-        $parentIds=array_unique($this->getAll()->pluck('parent')->toArray());
-        $parents=Unit::whereIn('id',$parentIds)->get();
         
-            
+        $departments=Unit::where('removed',false)->get();
+
+        return $departments->filter(function ($item) {
+            return $item->isDepartment();
+        })->values();
+
+        
+    }
+
+    public function getTree($parents)
+    {
        
         if(count($parents)){
             foreach ($parents as $parent) {

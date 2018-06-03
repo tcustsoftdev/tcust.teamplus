@@ -21,16 +21,16 @@ class ClassesController extends Controller
     
     public function index()
     {
-        $classes = $this->classesService->getTree();
+        $classes = $this->classesService->getActiveClasses();
+        $parentIds=array_unique($classes->pluck('parent')->toArray());
+     
+        $parents=Unit::whereIn('id',$parentIds)->get();
+        
+            
+
+        $tree=$this->classesService->getTree($parents);
       
-        return response()->json($classes);
-
-
-        // $classes =$this->classesService->getAll()
-        //                 ->select('name','code','id','parent')
-        //                 ->orderBy('code')->get();
-
-        // return response()->json($classes);
+        return response()->json($tree);
     }
 
     public function getByCodes($codes)

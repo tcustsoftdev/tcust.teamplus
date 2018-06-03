@@ -31,10 +31,13 @@ class AuthService
             ]);
         }
     }
+    
     function findUser($number)
     {
         return User::where('number',$number)->first();
     }
+
+
     public function login($number,$unit_code,$role)
     {
         $unit=Unit::where('code',$unit_code)->first();

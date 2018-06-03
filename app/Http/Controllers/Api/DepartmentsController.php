@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\UnitsService;
 use App\Services\AuthService;
+use App\Services\ClassesService;
 use App\Repositories\TPSync\Departments;
 use App\Services\Teamplus\GroupService;
 use App\Repositories\TPSync\Users;
@@ -19,19 +20,34 @@ class DepartmentsController extends Controller
 {
    
     public function __construct(UnitsService $unitsService,AuthService $authService,
-        Departments $tpDepartments, GroupService $tpGroupService,Users $tpUsers) 
+    ClassesService $classesService ,Departments $tpDepartments, GroupService $tpGroupService,Users $tpUsers) 
     {
         $this->api_key=config('app.api.key');
 
         $this->unitsService=$unitsService;
         $this->authService=$authService;
+        $this->classesService=$classesService;
 
         $this->tpDepartments=$tpDepartments;
         $this->tpGroupService=$tpGroupService;
         $this->tpUsers=$tpUsers;
     }
+
+    public function index()
+    {
+       
+        $departments = $this->classesService->getDepartments();
+       
+       // $departmentsTree=$this->classesService->getTree($departments);
+      
+        return response()->json($departments);
+
+
+        
+    }
+
     
-    public function test()
+    function  test()
     {
        
         $unit=Unit::find(2);
@@ -48,7 +64,7 @@ class DepartmentsController extends Controller
 
     
     
-    public function store()
+    function store()
     {
         dd('store');
         $request=request();

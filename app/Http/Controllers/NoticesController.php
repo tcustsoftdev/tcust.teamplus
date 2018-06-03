@@ -309,8 +309,8 @@ class NoticesController extends Controller
                 'Classes' => $notice->classes , 
                 'Levels'  => $notice->levels , 
                 'PS' => $notice->ps , 
-                'UpdatedAt' => $notice->updated_at
-                
+                'UpdatedAt' => $notice->updated_at,
+                'CreatedBy' => $notice->created_by
             );
         }
         return array(

@@ -66,10 +66,9 @@ class Syncusers extends Command
                 $email=$user->email;
                 $name=$user->name;
                 $departmentCode=$unit->code;
-                $status= $user->active ? 1 : 3;   //1在職 2停用 3離職
+                $status= $user->active ? 1 : 2;   //1在職 2停用 3離職
 
                 $this->TPUsers->syncUser($number, $password ,$email, $name, $departmentCode, $status);
-
             }
 
         }

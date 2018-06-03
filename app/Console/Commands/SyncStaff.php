@@ -49,59 +49,56 @@ class SyncStaff extends Command
     public function handle()
     {
         ini_set('max_execution_time', 1200);
-        
         //更新現有職員與教師狀態
-        $existStaffUsers=User::whereIn('role',['Staff','Teacher'])->get();
-        $this->syncActive($existStaffUsers);
-        $this->syncStaffsByUnits();
+        $roles=[ User::staffRoleName(), User::teacherRoleName() ];
+        $existStaffUsers=User::whereIn('role',$roles)->get();
+        foreach($existStaffUsers as $staffUser){
+            $this->updateStaffStatus($staffUser);
+        }
+
+        $allUnits = $this->units->getAll()->get();
+        foreach($allUnits as $unit){
+            
+            //取得學校職員資料
+            $staffsInUnit=$this->schools->getStaffsByUnit($unit->code)->get();
+
+            foreach($staffsInUnit as $staschoolStaffff){
+                if($schoolStaff->isActive()){
+                    $this->syncSchoolStaff($schoolStaff,$unit);
+                }
+
+            }
+            
+        }
+       
+       
 
 
         Log::info('Sync Staff Has Done.');
         $this->info('Sync Staff Has Done.');
     }
 
-    function syncActive($users)
+    function syncSchoolStaff($schoolStaff,$unit)
     {
-        foreach($users as $staffUser){
-            //取得對應之學校職員/教師資料
-            $staffNumber=$staffUser->number;
-            $schoolStaff= $this->schools->getStaffByNumber($staffNumber);
-            if($schoolStaff){
-                $staffUser->active=$schoolStaff->isActive();
-            }else{
-                $staffUser->active=false;
-            }
-
-            $staffUser->save();
-        }
-
+        $userValues=User::initFromStaff($schoolStaff,$schoolStaff->getRole());
+        $userValues['unit_id'] = $unit->id;
+        $userValues['active'] = true;
+        $this->createOrUpdateUser($userValues);
     }
 
-    function syncStaffsByUnits()
+
+    function updateStaffStatus($staffUser)
     {
-        $allUnits = $this->units->getAll()->get();
-        
-        foreach($allUnits as $unit){
-            
-            //取得學校職員資料
-            $staffsInUnit=$this->schools->getStaffsByUnit($unit->code)->get();
-            
-           
-            $staffsInUnit = $staffsInUnit->filter(function ($item) {
-                return $item->isActive();
-            })->all();
-           
-
-            foreach($staffsInUnit as $schoolStaff){
-                
-                $userValues=User::initFromStaff($schoolStaff,$schoolStaff->getRole());
-                $userValues['unit_id'] = $unit->id;
-
-                $this->createOrUpdateUser($userValues);
-
-            }
-            
+        //取得對應之學校職員/教師資料
+        $staffNumber=$staffUser->number;
+        $schoolStaff= $this->schools->getStaffByNumber($staffNumber);
+        if($schoolStaff){
+            $staffUser->active=$schoolStaff->isActive();
+        }else{
+            $staffUser->active=false;
         }
+
+        $staffUser->save();
     }
 
     function createOrUpdateUser(array $userValues)

@@ -43,51 +43,56 @@ class SyncStudents extends Command
         ini_set('max_execution_time', 1200);
 
         //更新現有學生狀態
-        $existStudentUsers=User::where('role','Teacher')->get();
+        $role=User::studentRoleName();
+        $existStudentUsers=User::where('role',$role)->get();
         foreach($existStudentUsers as $studentUser){
             //取得對應之學校學生資料
-            $studentNumber=$studentUser->number;
-            $schoolStudent= $this->schools->getStudentByNumber($studentNumber);
-            if($schoolStudent){
-                $studentUser->active=$schoolStudent->isActive();
-            }else{
-                $studentUser->active=false;
-            }
-
-            $studentUser->save();
+            $this->updateStudentStatus($studentUser);
         }
 
-        $this->syncStudentsByClasses();
-
-        Log::info('Sync Students Has Done.');
-        $this->info('Sync Students Has Done.');
-    }
-
-    function syncStudentsByClasses()
-    {
         $allClasses = $this->classesService->getAll()->get();
-        
         foreach($allClasses as $classEntity){
             
             //取得學校學生資料
             $studentsInClass=$this->schools->getStudentsByClass($classEntity->code)->get();
            
-            $studentsInClass = $studentsInClass->filter(function ($item) {
-                return $item->isActive();
-            })->all();
-            
-           
 
             foreach($studentsInClass as $schoolStudent){
-                
-                $userValues=User::initFromSchoolStudent($schoolStudent);
-                $userValues['unit_id'] = $classEntity->id;
 
-                $this->createOrUpdateUser($userValues);
+                if($schoolStudent->isActive()){
+                    $this->syncSchoolStudent($schoolStudent,$classEntity);
+                }
 
             }
             
         }
+
+        Log::info('Sync Students Has Done.');
+        $this->info('Sync Students Has Done.');
+    }
+
+    
+
+    function syncSchoolStudent($schoolStudent,$classEntity)
+    {
+        $userValues=User::initFromSchoolStudent($schoolStudent);
+        $userValues['unit_id'] = $classEntity->id;
+        $userValues['active'] = true;
+        $this->createOrUpdateUser($userValues);
+    }
+
+    function updateStudentStatus($studentUser)
+    {
+        //取得對應之學校學生資料
+        $studentNumber=$studentUser->number;
+        $schoolStudent= $this->schools->getStudentByNumber($studentNumber);
+        if($schoolStudent){
+            $studentUser->active=$schoolStudent->isActive();
+        }else{
+            $studentUser->active=false;
+        }
+
+        $studentUser->save();
     }
 
     function createOrUpdateUser(array $userValues)

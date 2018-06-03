@@ -8,7 +8,7 @@
 
     $.fn.hummingbird = function(options){
 
-
+	
 	var methodName = options;
 	var args = arguments;
 	var options = $.extend( {}, $.fn.hummingbird.defaults, options);
