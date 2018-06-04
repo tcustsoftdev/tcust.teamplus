@@ -49,7 +49,7 @@ class NoticesController extends Controller
 
     function getManagers(Unit $unit)
     {
-        return ['ss355'];
+       
         $topManager = $unit->topManager(); 
        
         $subs=$this->schools->getDailyAgents($topManager);

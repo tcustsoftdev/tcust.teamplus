@@ -39,32 +39,7 @@ class TestController extends Controller
 
     public function test()
     {
-        ini_set('max_execution_time', 1200);
-       
-        //更新現有學生狀態
-        $role=User::studentRoleName();
-        $existStudentUsers=User::where('role',$role)->get();
-        foreach($existStudentUsers as $studentUser){
-            //取得對應之學校學生資料
-            $this->updateStudentStatus($studentUser);
-        }
-
-        $allClasses = $this->classesService->getAll()->get();
-        foreach($allClasses as $classEntity){
-            
-            //取得學校學生資料
-            $studentsInClass=$this->schools->getStudentsByClass($classEntity->code)->get();
-           
-
-            foreach($studentsInClass as $schoolStudent){
-
-                if($schoolStudent->isActive()){
-                    $this->syncSchoolStudent($schoolStudent,$classEntity);
-                }
-
-            }
-            
-        }
+        
         
         
     }
