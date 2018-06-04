@@ -75,7 +75,6 @@ function isTrue(val) {
 }
 function setSelectedUnits(unitCodes, unitNames) {
 
-   
     var textCode = '';
     for (var i = 0; i < unitCodes.length; i++) {
         textCode += unitCodes[i];
@@ -95,6 +94,30 @@ function setSelectedUnits(unitCodes, unitNames) {
 
     //隱藏err-msg
     $("input[name='Units']").next().hide();
+    //$('#unit-list').show();
+}
+
+function setSelectedDepartments(unitCodes, unitNames) {
+
+    var textCode = '';
+    for (var i = 0; i < unitCodes.length; i++) {
+        textCode += unitCodes[i];
+        if (i < unitCodes.length - 1) textCode += ',';
+    }
+    $('#department-codes').val(textCode);
+
+    var textName = '';
+    for (var i = 0; i < unitNames.length; i++) {
+        textName += unitNames[i];
+        if (i < unitNames.length - 1) textName += ',';
+    }
+
+    $('#department-names').val(textName);
+
+    CloseCustomModal();
+
+    //隱藏err-msg
+    $("input[name='Departments']").next().hide();
     //$('#unit-list').show();
 }
 
@@ -124,6 +147,9 @@ function setSelectedClasses(codes, names) {
 function getSelectedUnits() {
     return $('#unit-codes').val();
 }
+function getSelectedDepartments() {
+    return $('#department-codes').val();
+}
 function getSelectedClasses() {
     return $('#class-codes').val();
 }
@@ -140,6 +166,7 @@ function fetchUnits() {
     });
 }
 function loadUnitNames() {
+    
     var url = '/api/units/getByCodes/';
 
     var codes = getSelectedUnits();
@@ -157,6 +184,30 @@ function loadUnitNames() {
         names = names.slice(0, -1);
 
         $('#unit-names').val(names);
+    }).fail(function (error) {
+        OnError();
+    });
+}
+
+function loadDepartmentNames() {
+   
+    var url = '/api/units/getByCodes/';
+
+    var codes = getSelectedDepartments();
+    if (!codes) return;
+
+    url += codes;
+
+    $.getJSON(url).done(function (data) {
+
+        var names = '';
+        for (var i = 0; i < data.length; i++) {
+            names += data[i].name + ',';
+        }
+
+        names = names.slice(0, -1);
+
+        $('#department-names').val(names);
     }).fail(function (error) {
         OnError();
     });
@@ -242,13 +293,18 @@ function getNode(unit) {
     return html;
 }
 function iniUnitsTree() {
-   
+  
     var treeview = $("#treeview-members");
     var type = getSelectType();
 
     var selected_codes = '';
     if (type == 'unit') {
         selected_codes = getSelectedUnits();
+       
+    } else if(type == 'department') {
+      
+        selected_codes = getSelectedDepartments();
+       
     } else {
 
         selected_codes = getSelectedClasses();
@@ -300,12 +356,10 @@ function onTeacherCheckChanged(checked) {
     if (checked) {
 
         beginSelectDepartments();
-        $('#class-list').show();
+        $('#department-list').show();
         $('#err-roles').hide();
-    } else {
-        if (!studentChecked()) {
-            $('#class-list').hide();
-        }
+    }else {
+        $('#department-list').hide();
     }
 }
 function onStudentCheckChanged(checked) {
@@ -313,10 +367,8 @@ function onStudentCheckChanged(checked) {
         beginSelectClasses();
         $('#class-list').show();
         $('#err-roles').hide();
-    } else {
-        if (!teacherChecked()) {
-            $('#class-list').hide();
-        }
+    }else {
+        $('#class-list').hide();
     }
 }
 function beginSelectUnits(hideLevels) {
@@ -362,7 +414,7 @@ function beginSelectClasses() {
 
 
 function beginSelectDepartments() {
-    setSelectType('unit');
+    setSelectType('department');
 
     var departments = fetchDepartments();
 
@@ -370,7 +422,7 @@ function beginSelectDepartments() {
         iniUnitsTree();
 
         $('#div-level').hide();
-        ShowCustomModal('請選擇發送對象科系');
+        ShowCustomModal('請選擇發送對象系所');
     }).catch(function (error) {
         OnError();
     });
@@ -383,12 +435,18 @@ function getSelectType() {
     return $('#select-type').val();
 }
 function onSelectDone() {
-
+    
     var type = getSelectType();
-   
+  
     var id_list = [];
     var options = {};
     if (type == 'unit') {
+        options = {
+            attr: "data-id",
+            list: id_list,
+            OnlyFinalInstance: false
+        };
+    }else if (type == 'department') {
         options = {
             attr: "data-id",
             list: id_list,
@@ -402,17 +460,23 @@ function onSelectDone() {
         };
     }
     $("#treeview-members").hummingbird("getChecked", options);
-
+    
     if (!id_list.length) {
         if (type == 'unit') alert('請選擇部門');
-        else alert('請選擇班級');
-
+        else if(type == 'department') alert('請選擇系所');
+        else  alert('請選擇班級');
         return false;
     }
 
     var name_list = [];
 
     if (type == 'unit') {
+        options = {
+            attr: "data-name",
+            list: name_list,
+            OnlyFinalInstance: false
+        };
+    }else if (type == 'department') {
         options = {
             attr: "data-name",
             list: name_list,
@@ -432,6 +496,8 @@ function onSelectDone() {
         setSelectedUnits(id_list, name_list);
 
         setLevels();
+    }else if (type == 'department') {
+        setSelectedDepartments(id_list, name_list);
     } else {
         setSelectedClasses(id_list, name_list);
     }
@@ -613,8 +679,12 @@ function iniEdit() {
     var teacher = teacherChecked();
     var staff = staffChecked();
 
-    if (teacher || staff) {
+    if (staff) {
         $('#unit-list').show();
+    }
+
+    if (teacher) {
+        $('#department-list').show();
     }
 
     if (student) {
@@ -622,5 +692,6 @@ function iniEdit() {
     }
 
     loadUnitNames();
+    loadDepartmentNames();
     loadClassNames();
 }

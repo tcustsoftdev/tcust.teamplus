@@ -22,6 +22,7 @@ class CreateNoticesTable extends Migration
             $table->boolean('teacher')->default(false);
             $table->boolean('student')->default(false);
             $table->text('units')->nullable();
+            $table->text('departments')->nullable();
             $table->text('classes')->nullable();
             $table->string('levels');
 

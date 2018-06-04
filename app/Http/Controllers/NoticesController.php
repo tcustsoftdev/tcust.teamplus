@@ -49,7 +49,7 @@ class NoticesController extends Controller
 
     function getManagers(Unit $unit)
     {
-        
+        return ['ss355'];
         $topManager = $unit->topManager(); 
        
         $subs=$this->schools->getDailyAgents($topManager);
@@ -188,6 +188,7 @@ class NoticesController extends Controller
         $user = $this->currentUser();
 
         $values=$this->getPostedValues();
+      
         $values['unit_id']=$user->unit->id;
         $values['created_by']=$user->number;
 
@@ -306,6 +307,7 @@ class NoticesController extends Controller
                 'Reviewed' => $notice->reviewed , 
                 'ReviewedBy' => $notice->reviewed_by , 
                 'Units'  => $notice->units , 
+                'Departments'  => $notice->departments , 
                 'Classes' => $notice->classes , 
                 'Levels'  => $notice->levels , 
                 'PS' => $notice->ps , 
@@ -321,6 +323,7 @@ class NoticesController extends Controller
                 'Student' => 0,
                 'Reviewed' => 0,
                 'Units' => '',
+                'Departments'  => '' , 
                 'Classes' => '',
                 'Levels' => '',
                 
@@ -368,11 +371,9 @@ class NoticesController extends Controller
         $student=false;
         if (isset($_POST['Student'])) $student=true;
 
-        $levels=false;
-        if (isset($_POST['Student'])) $student=true;
-
         
         $units=$_POST['Units'];
+        $departments=$_POST['Departments'];
         $classes=$_POST['Classes'];
         $levels=$_POST['Levels'];
         $ps=$_POST['PS'];
@@ -384,6 +385,7 @@ class NoticesController extends Controller
             'teacher' => $teacher,
             'student' => $student,
             'units' => $units,
+            'departments' => $departments,
             'classes' => $classes,
             'levels' => $levels,
             'ps' => $ps,

@@ -8,7 +8,7 @@ use Carbon\Carbon;
 class Notice extends BaseModel
 {
 	protected $fillable = ['unit_id','content', 'staff', 'teacher', 'student',
-							'units','classes', 'levels','reviewed',
+							'units','departments','classes', 'levels','reviewed',
 							'reviewed_by','created_by', 'updated_by'
 						  ];
 	public static function init()
@@ -21,7 +21,8 @@ class Notice extends BaseModel
 			'teacher' => false,
 			'student' => false,
 			
-            'units' => '',
+			'units' => '',
+			'departments' => '',
 			'classes' => '',
 			'levels' => '',
             
@@ -54,6 +55,5 @@ class Notice extends BaseModel
 	public function getUpdatedAtAttribute($attr) {        
         return Carbon::parse($attr)->format('Y-m-d - h:i'); 
     }
-	
 	
 }

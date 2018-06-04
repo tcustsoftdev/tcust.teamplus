@@ -67,18 +67,16 @@ class NoticeService
        
         if($notice->teacher)
         {
-            $classCodes= explode(',', $notice->classes);
+            $departmentCodes= explode(',', $notice->departments);
           
-            $classes = $this->classesService->getClassesByCodes($classCodes);
-           
-            $parentUnitIds=array_unique($classes->pluck('parent')->toArray());
+            $departmentIds = $this->unitsService->getUnitsByCodes($departmentCodes)
+                                                ->pluck('id')->toArray(); 
             
-            $teacherNumbers = $this->unitsService->getTeachersByUnitIds($parentUnitIds)
+            $teacherNumbers = $this->unitsService->getTeachersByUnitIds($departmentIds)
                                             ->where('active',true)
                                             ->pluck('number')->toArray();
 
             $teacherNumbers = array_filter($teacherNumbers);
-         
             
         }
         

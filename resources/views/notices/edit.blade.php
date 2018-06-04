@@ -97,6 +97,15 @@
                 <input type="hidden" id="unit-codes" name="Units" value="<?php echo $notice['Units']; ?>" />
                 <small id="err-units" class="text-danger" style="display: none;">請選擇通知對象部門</small>
             </div>
+            <div id="department-list" style="display:none">
+                <label>通知對象系所</label>
+                <button id="btn-edit-departments" class="btn btn-primary btn-xs">
+                    <span class="glyphicon glyphicon-pencil"></span> 編輯
+                </button>
+                <textarea id="department-names" class="form-control" rows="5" cols="50" disabled></textarea>
+                <input type="hidden" id="department-codes" name="Departments" value="<?php echo $notice['Departments']; ?>" />
+                <small id="err-departments" class="text-danger" style="display: none;">請選擇通知對象系所</small>
+            </div>
             <div id="class-list" class="pad-top" style="display:none">
                 <label>通知對象班級</label>
                 <button id="btn-edit-classes" class="btn btn-primary btn-xs">
@@ -323,6 +332,11 @@
             beginSelectUnits();
         });
 
+        $('#btn-edit-departments').click(function (e) {
+            e.preventDefault();
+            beginSelectDepartments();
+        });
+
         $('#btn-edit-classes').click(function (e) {
             e.preventDefault();
             beginSelectClasses();
@@ -399,6 +413,29 @@
                 canSubmit = false;
             }
 
+            if (staff) {
+                var units = $("input[name='Units']").val();
+                if (!units) {
+                    canSubmit = false;
+                    $('#unit-list').show();
+                    $("input[name='Units']").next().show();
+                    errMsgs.push($("input[name='Units']").next().text());
+                }
+
+            }
+
+            if (teacher) {
+                var departments = $("input[name='Departments']").val();
+              
+                if (!departments) {
+                    canSubmit = false;
+                    $('#department-list').show();
+                    $("input[name='Departments']").next().show();
+                    errMsgs.push($("input[name='Departments']").next().text());
+                }
+
+            }
+
             if (student) {
                 var  classes= $("input[name='Classes']").val();
                 if (!classes) {
@@ -410,16 +447,7 @@
 
             }
 
-            if (teacher || staff) {
-                var units = $("input[name='Units']").val();
-                if (!units) {
-                    canSubmit = false;
-                    $('#unit-list').show();
-                    $("input[name='Units']").next().show();
-                    errMsgs.push($("input[name='Units']").next().text());
-                }
-
-            }
+            
 
             if (!canSubmit) {
                 showErrors(errMsgs);
@@ -428,17 +456,21 @@
             } 
 
             
+            if (!staff) {
+                $("input[name='Units']").val('');
+                $("input[name='Levels']").val('');
 
+            }
+            if (!teacher) {
+                $("input[name='Departments']").val('');
+
+            }
             if (!student) {
                 $("input[name='Classes']").val('');
                 
             }
 
-            if (!staff && !teacher) {
-                $("input[name='Units']").val('');
-                $("input[name='Levels']").val('');
-
-            }
+            
           
         });
         
